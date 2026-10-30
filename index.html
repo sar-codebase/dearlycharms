@@ -122,41 +122,58 @@
                 </div>
             </div>
 
-            <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <h3 class="text-base font-bold text-slate-900 mb-4">Active Catalogues (<span x-text="products.length"></span>)</h3>
-                <div class="divide-y divide-slate-100 overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-xs uppercase text-slate-400 font-bold tracking-wider border-b border-slate-100">
-                                <th class="py-3 px-2">Item</th>
-                                <th class="py-3 px-2">Category</th>
-                                <th class="py-3 px-2">Angles</th>
-                                <th class="py-3 px-2">Price</th>
-                                <th class="py-3 px-2 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y divide-slate-100">
-                            <template x-for="item in products" :key="item.id">
-                                <tr>
-                                    <td class="py-3 px-2 flex items-center space-x-3">
-                                        <img :src="item.images[0]" class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200">
-                                        <div>
-                                            <p class="font-bold text-slate-900" x-text="item.name"></p>
-                                            <p class="text-xs text-slate-500 line-clamp-1" x-text="item.description"></p>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2"><span class="bg-orange-50 text-[rgb(231,111,69)] text-xs font-bold px-2.5 py-1 rounded-md" x-text="item.category"></span></td>
-                                    <td class="py-3 px-2 font-medium text-slate-600" x-text="item.images.length + ' imgs'"></td>
-                                    <td class="py-3 px-2 font-bold theme-text" x-text="'₹' + item.price"></td>
-                                    <td class="py-3 px-2 text-right space-x-2">
-                                        <button @click="editProduct(item)" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-50 transition">Edit</button>
-                                        <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 transition">Remove</button>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
+            <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-bold text-slate-900">Active Catalogues (<span x-text="products.length"></span>)</h3>
+                    <template x-if="products.length > 0">
+                        <button @click="deleteAllProducts" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-3 py-2 rounded-xl transition border border-red-200 flex items-center space-x-1">
+                            <span>🗑️ Delete All Catalogues</span>
+                        </button>
+                    </template>
                 </div>
+
+                <template x-if="products.length === 0">
+                    <div class="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                        <p class="text-slate-500 font-medium text-sm">No catalogues currently active in inventory.</p>
+                        <p class="text-slate-400 text-xs mt-1">Use the form on the left to add new items!</p>
+                    </div>
+                </template>
+
+                <template x-if="products.length > 0">
+                    <div class="divide-y divide-slate-100 overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs uppercase text-slate-400 font-bold tracking-wider border-b border-slate-100">
+                                    <th class="py-3 px-2">Item</th>
+                                    <th class="py-3 px-2">Category</th>
+                                    <th class="py-3 px-2">Angles</th>
+                                    <th class="py-3 px-2">Price</th>
+                                    <th class="py-3 px-2 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-slate-100">
+                                <template x-for="item in products" :key="item.id">
+                                    <tr>
+                                        <td class="py-3 px-2 flex items-center space-x-3">
+                                            <img :src="item.images[0]" class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200">
+                                            <div>
+                                                <p class="font-bold text-slate-900" x-text="item.name"></p>
+                                                <p class="text-xs text-slate-500 line-clamp-1" x-text="item.description"></p>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 px-2"><span class="bg-orange-50 text-[rgb(231,111,69)] text-xs font-bold px-2.5 py-1 rounded-md" x-text="item.category"></span></td>
+                                        <td class="py-3 px-2 font-medium text-slate-600" x-text="item.images.length + ' imgs'"></td>
+                                        <td class="py-3 px-2 font-bold theme-text" x-text="'₹' + item.price"></td>
+                                        <td class="py-3 px-2 text-right space-x-2">
+                                            <button @click="editProduct(item)" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-50 transition">Edit</button>
+                                            <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 transition">Remove</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
             </div>
         </div>
 
@@ -206,6 +223,13 @@
                 </select>
             </div>
         </div>
+
+        <template x-if="filteredProducts.length === 0">
+            <div class="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-xs">
+                <p class="text-slate-500 font-bold text-base">No catalogues available to display right now.</p>
+                <p class="text-slate-400 text-xs mt-1">Check back soon or add items via the owner link.</p>
+            </div>
+        </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <template x-for="item in filteredProducts" :key="item.id">
@@ -577,6 +601,13 @@
                 deleteProduct(id) {
                     if (confirm('Are you sure you want to remove this catalog item?')) {
                         this.products = this.products.filter(p => p.id !== id);
+                        this.saveToStorage();
+                    }
+                },
+
+                deleteAllProducts() {
+                    if (confirm('Are you sure you want to delete ALL catalogues from inventory? This cannot be undone.')) {
+                        this.products = [];
                         this.saveToStorage();
                     }
                 },
