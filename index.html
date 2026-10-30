@@ -60,50 +60,62 @@
                 <h2 class="text-xl font-bold text-blue-950">Owner Command Center</h2>
             </div>
             <div class="flex items-center space-x-2">
-                <button @click="ownerTab = 'inventory'" :class="ownerTab === 'inventory' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Inventory Catalogues</button>
+                <button @click="ownerTab = 'inventory'" :class="ownerTab === 'inventory' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Inventory & Categories</button>
                 <button @click="ownerTab = 'preview'" :class="ownerTab === 'preview' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Test Buyer Storefront</button>
                 <button @click="ownerTab = 'profile'" :class="ownerTab === 'profile' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Owner Profile / Security</button>
             </div>
         </div>
 
         <div x-show="ownerTab === 'inventory'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm h-fit space-y-4">
-                <h3 class="text-base font-bold text-blue-950" x-text="editMode ? '✏️ Edit Catalogue' : '✨ Add New Jewellery Catalogue'"></h3>
-                <form @submit.prevent="saveProduct" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Item Name</label>
-                        <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Category Type</label>
-                        <select x-model="currentProduct.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
-                            <option value="Necklace">Necklace</option>
-                            <option value="Bangles">Bangles</option>
-                            <option value="Hair Accessories">Hair Accessories</option>
-                            <option value="Pendants">Pendants</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Price (₹)</label>
-                        <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images from Mobile/Desktop</label>
-                        <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-900 hover:file:bg-blue-100 cursor-pointer">
-                        <p class="text-[11px] text-slate-400 mt-1" x-text="currentProduct.images.length + ' image(s) loaded.'"></p>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Description</label>
-                        <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm" x-text="editMode ? 'Save Changes' : 'Publish Catalogue'"></button>
-                        <template x-if="editMode">
-                            <button type="button" @click="resetForm" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition">Cancel</button>
-                        </template>
-                    </div>
-                </form>
+            <div class="space-y-6">
+                <!-- Add New Category Box -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-blue-950">📁 Add New Category</h3>
+                    <form @submit.prevent="addCategory" class="space-y-3">
+                        <input type="text" x-model="newCategoryName" placeholder="e.g., Earrings, Rings" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">Create Category Button</button>
+                    </form>
+                </div>
+
+                <!-- Add/Edit Catalogue Form -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-blue-950" x-text="editMode ? '✏️ Edit Catalogue' : '✨ Add New Jewellery Catalogue'"></h3>
+                    <form @submit.prevent="saveProduct" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Item Name</label>
+                            <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Category Type</label>
+                            <select x-model="currentProduct.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                                <template x-for="cat in categories" :key="cat">
+                                    <option :value="cat" x-text="cat"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Price (₹)</label>
+                            <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images from Mobile/Desktop</label>
+                            <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-900 hover:file:bg-blue-100 cursor-pointer">
+                            <p class="text-[11px] text-slate-400 mt-1" x-text="currentProduct.images.length + ' image(s) loaded.'"></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Description</label>
+                            <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm" x-text="editMode ? 'Save Changes' : 'Publish Catalogue'"></button>
+                            <template x-if="editMode">
+                                <button type="button" @click="resetForm" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition">Cancel</button>
+                            </template>
+                        </div>
+                    </form>
+                </div>
             </div>
+
             <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <h3 class="text-base font-bold text-blue-950 mb-4">Active Catalogues (<span x-text="products.length"></span>)</h3>
                 <div class="divide-y divide-slate-100 overflow-x-auto">
@@ -172,13 +184,13 @@
             </div>
         </div>
 
+        <!-- Dynamic Category Filter Buttons -->
         <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
                 <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
-                <button @click="selectedCategory = 'Necklace'" :class="selectedCategory === 'Necklace' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Necklaces</button>
-                <button @click="selectedCategory = 'Bangles'" :class="selectedCategory === 'Bangles' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Bangles</button>
-                <button @click="selectedCategory = 'Hair Accessories'" :class="selectedCategory === 'Hair Accessories' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Hair Accessories</button>
-                <button @click="selectedCategory = 'Pendants'" :class="selectedCategory === 'Pendants' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Pendants</button>
+                <template x-for="cat in categories" :key="cat">
+                    <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap" x-text="cat"></button>
+                </template>
             </div>
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sort By:</span>
@@ -190,6 +202,7 @@
             </div>
         </div>
 
+        <!-- Product Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <template x-for="item in filteredProducts" :key="item.id">
                 <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition flex flex-col justify-between">
@@ -221,7 +234,7 @@
         <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
             <h2 class="text-3xl font-extrabold text-blue-950">About DearlyCharms</h2>
             <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
-                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic. From traditional temple kempu bangles and statement necklaces to handcrafted hair accessories and pendants, our curation bridges timeless tradition with contemporary grace.</p>
+                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic.</p>
             </div>
             <button @click="currentView = 'shop'" class="bg-blue-900 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-md">Back to Store</button>
         </div>
@@ -422,7 +435,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC WITH SHARED LOCALSTORAGE -->
+    <!-- JAVASCRIPT LOGIC WITH DYNAMIC CATEGORIES -->
     <script>
         function storeData() {
             return {
@@ -453,6 +466,9 @@
                 cart: [],
                 orderForm: { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false },
 
+                newCategoryName: '',
+                categories: JSON.parse(localStorage.getItem('dc_categories')) || ['Necklace', 'Bangles', 'Hair Accessories', 'Pendants'],
+
                 currentProduct: {
                     name: '',
                     category: 'Bangles',
@@ -461,7 +477,6 @@
                     description: ''
                 },
 
-                // Persists products globally between owner & buyer views using localStorage
                 products: JSON.parse(localStorage.getItem('dc_products')) || [
                     {
                         id: 1,
@@ -476,8 +491,21 @@
                     }
                 ],
 
-                saveProductsToStorage() {
+                saveToStorage() {
                     localStorage.setItem('dc_products', JSON.stringify(this.products));
+                    localStorage.setItem('dc_categories', JSON.stringify(this.categories));
+                },
+
+                addCategory() {
+                    let cat = this.newCategoryName.trim();
+                    if (cat && !this.categories.includes(cat)) {
+                        this.categories.push(cat);
+                        this.saveToStorage();
+                        alert(`Category "${cat}" created successfully! It is now available in your dropdown and buyer filters.`);
+                        this.newCategoryName = '';
+                    } else {
+                        alert('Category name is empty or already exists.');
+                    }
                 },
 
                 loginOwner() {
@@ -570,7 +598,7 @@
                 resetForm() {
                     this.editMode = false;
                     this.editId = null;
-                    this.currentProduct = { name: '', category: 'Bangles', price: '', images: [], description: '' };
+                    this.currentProduct = { name: '', category: this.categories[0] || 'Bangles', price: '', images: [], description: '' };
                 },
 
                 saveProduct() {
@@ -601,14 +629,14 @@
                         this.products.unshift(newObj);
                         alert('New catalogue added and live on the storefront!');
                     }
-                    this.saveProductsToStorage();
+                    this.saveToStorage();
                     this.resetForm();
                 },
 
                 deleteProduct(id) {
                     if (confirm('Are you sure you want to remove this catalog item?')) {
                         this.products = this.products.filter(p => p.id !== id);
-                        this.saveProductsToStorage();
+                        this.saveToStorage();
                     }
                 },
 
