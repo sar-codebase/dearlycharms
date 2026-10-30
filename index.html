@@ -9,81 +9,219 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-[#fdfbf7] text-stone-800" x-data="storeData()">
+<body class="bg-slate-50 text-slate-800" x-data="storeData()">
 
     <!-- TOP ANNOUNCEMENT BAR -->
-    <div class="bg-[#9f5c59] text-rose-50 text-xs py-2 px-4 text-center font-medium tracking-wide">
+    <div class="bg-blue-900 text-amber-200 text-xs py-2 px-4 text-center font-bold tracking-wide">
         ✨ Free Shipping Across India on Orders Above ₹999 | Cash on Delivery Available ✨
     </div>
 
     <!-- MAIN HEADER -->
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-rose-100 shadow-sm">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             
             <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'shop'">
-                <div class="w-10 h-10 rounded-full bg-rose-100 border border-rose-300 flex items-center justify-center text-[#9f5c59] font-bold text-xl">
+            <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'shop'">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-900 to-indigo-700 flex items-center justify-center text-amber-300 font-bold text-xl shadow-md">
                     DC
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-[#6b3836]">DearlyCharms</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-stone-500 font-semibold">Imitation Jewelry</p>
+                    <h1 class="text-xl font-bold tracking-tight text-blue-950">DearlyCharms</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-amber-700 font-extrabold">Imitation Jewelry</p>
                 </div>
             </div>
 
             <!-- Navigation & Actions -->
             <div class="flex items-center space-x-4 sm:space-x-6">
-                <!-- Role Switcher -->
-                <div class="bg-rose-50/80 p-1 rounded-xl border border-rose-200/60 flex text-xs font-semibold">
-                    <button @click="activeTab = 'shop'" :class="activeTab === 'shop' ? 'bg-white text-[#9f5c59] shadow-sm' : 'text-stone-600'" class="px-3.5 py-1.5 rounded-lg transition">Buyer View</button>
-                    <button @click="checkOwnerAccess" :class="activeTab === 'owner' ? 'bg-[#9f5c59] text-white shadow-sm' : 'text-stone-600'" class="px-3.5 py-1.5 rounded-lg transition">Owner Dashboard</button>
-                </div>
-
-                <!-- Cart Button -->
-                <button x-show="activeTab === 'shop'" @click="cartOpen = true" class="relative p-2 text-stone-700 hover:text-[#9f5c59] transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 bg-[#9f5c59] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
+                <!-- About Us Page Link -->
+                <button @click="currentView = 'about'" :class="currentView === 'about' ? 'text-blue-900 font-bold' : 'text-slate-600'" class="text-sm font-medium hover:text-blue-900 transition">
+                    About Us
                 </button>
 
-                <!-- About Us Button -->
-                <button @click="aboutModal = true" class="hidden sm:inline-flex text-sm font-medium text-stone-700 hover:text-[#9f5c59] transition">
-                    About Us
+                <!-- Cart Button -->
+                <button @click="cartOpen = true" class="relative p-2 text-slate-700 hover:text-blue-900 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- ================= BUYER STOREFRONT ================= -->
-    <main x-show="activeTab === 'shop'" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- ================= OWNER LOGIN GATE (?owner=true URL) ================= -->
+    <main x-show="isOwnerUrl && !ownerLoggedIn" class="max-w-md mx-auto px-4 py-20" x-cloak>
+        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
+            <div class="w-16 h-16 bg-blue-900 text-amber-300 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg">
+                🔒
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-blue-950">Owner Access Portal</h2>
+                <p class="text-xs text-slate-500 mt-1">Enter your management passcode to access DearlyCharms inventory controller.</p>
+            </div>
+            
+            <form @submit.prevent="loginOwner" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Passcode</label>
+                    <input type="password" x-model="enteredPassword" placeholder="Enter secure passcode" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition shadow-md text-sm">
+                    Authenticate & Enter
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- ================= OWNER MANAGEMENT DASHBOARD ================= -->
+    <main x-show="isOwnerUrl && ownerLoggedIn" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <div class="flex items-center space-x-3">
+                <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                <h2 class="text-xl font-bold text-blue-950">Owner Command Center</h2>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button @click="ownerTab = 'inventory'" :class="ownerTab === 'inventory' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Inventory Catalogues</button>
+                <button @click="ownerTab = 'preview'" :class="ownerTab === 'preview' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Test Buyer Storefront</button>
+                <button @click="ownerTab = 'profile'" :class="ownerTab === 'profile' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Owner Profile / Security</button>
+            </div>
+        </div>
+
+        <!-- TAB 1: INVENTORY -->
+        <div x-show="ownerTab === 'inventory'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm h-fit space-y-4">
+                <h3 class="text-base font-bold text-blue-950" x-text="editMode ? '✏️ Edit Catalogue' : '✨ Add New Jewellery Catalogue'"></h3>
+
+                <form @submit.prevent="saveProduct" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Item Name</label>
+                        <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Category Type</label>
+                        <select x-model="currentProduct.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <option value="Necklace">Necklace</option>
+                            <option value="Bangles">Bangles</option>
+                            <option value="Hair Accessories">Hair Accessories</option>
+                            <option value="Pendants">Pendants</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Price (₹)</label>
+                        <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images from Mobile/Desktop</label>
+                        <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-900 hover:file:bg-blue-100 cursor-pointer">
+                        <p class="text-[11px] text-slate-400 mt-1" x-text="currentProduct.images.length + ' image(s) loaded.'"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Description</label>
+                        <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                    </div>
+
+                    <div class="flex space-x-2">
+                        <button type="submit" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm" x-text="editMode ? 'Save Changes' : 'Publish Catalogue'"></button>
+                        <template x-if="editMode">
+                            <button type="button" @click="resetForm" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition">Cancel</button>
+                        </template>
+                    </div>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-blue-950 mb-4">Active Catalogues (<span x-text="products.length"></span>)</h3>
+                <div class="divide-y divide-slate-100 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-xs uppercase text-slate-400 font-bold tracking-wider border-b border-slate-100">
+                                <th class="py-3 px-2">Item</th>
+                                <th class="py-3 px-2">Category</th>
+                                <th class="py-3 px-2">Angles</th>
+                                <th class="py-3 px-2">Price</th>
+                                <th class="py-3 px-2 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-100">
+                            <template x-for="item in products" :key="item.id">
+                                <tr>
+                                    <td class="py-3 px-2 flex items-center space-x-3">
+                                        <img :src="item.images[0]" class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200">
+                                        <div>
+                                            <p class="font-bold text-blue-950" x-text="item.name"></p>
+                                            <p class="text-xs text-slate-500 line-clamp-1" x-text="item.description"></p>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-2"><span class="bg-blue-50 text-blue-900 text-xs font-bold px-2.5 py-1 rounded-md" x-text="item.category"></span></td>
+                                    <td class="py-3 px-2 font-medium text-slate-600" x-text="item.images.length + ' imgs'"></td>
+                                    <td class="py-3 px-2 font-bold text-blue-900" x-text="'₹' + item.price"></td>
+                                    <td class="py-3 px-2 text-right space-x-2">
+                                        <button @click="editProduct(item)" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-50 transition">Edit</button>
+                                        <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 transition">Remove</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: STOREFRONT PREVIEW -->
+        <div x-show="ownerTab === 'preview'">
+            <div class="bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 rounded-2xl mb-6 text-xs font-bold flex justify-between items-center">
+                <span>👀 Storefront Test Mode Active.</span>
+                <button @click="ownerTab = 'inventory'" class="bg-amber-900 text-white px-3 py-1 rounded-xl">Back to Inventory</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: PROFILE / PASSWORD RESET -->
+        <div x-show="ownerTab === 'profile'" class="max-w-md mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <h3 class="text-lg font-bold text-blue-950">Owner Profile & Security</h3>
+            <form @submit.prevent="updatePassword" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">New Management Passcode</label>
+                    <input type="text" x-model="newOwnerPass" placeholder="Enter new password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-sm shadow-md">
+                    Update Passcode
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- ================= BUYER STOREFRONT (Default URL) ================= -->
+    <main x-show="!isOwnerUrl || (isOwnerUrl && ownerLoggedIn && ownerTab === 'preview')" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
         
         <!-- Hero Banner -->
-        <div class="relative rounded-2xl bg-gradient-to-r from-[#8c4a47] to-[#b06a66] text-rose-50 p-8 sm:p-12 mb-10 overflow-hidden shadow-lg">
+        <div class="relative rounded-3xl bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 text-white p-8 sm:p-12 mb-10 overflow-hidden shadow-xl">
             <div class="relative z-10 max-w-xl">
-                <span class="bg-white/20 backdrop-blur text-rose-100 text-xs font-semibold uppercase tracking-wider px-3.5 py-1 rounded-full">New Festive Curation</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-3 mb-3 tracking-tight">Timeless Elegance for Every Indian Occasion.</h2>
-                <p class="text-rose-100/90 text-sm sm:text-base mb-6">Explore our curated collection of kempu bangles, sparkling necklaces, hair accessories, and pendants with 360° multi-angle views.</p>
-                <a href="#catalogue-section" class="bg-white text-[#8c4a47] font-semibold px-6 py-3 rounded-xl shadow hover:bg-rose-50 transition text-sm">Shop Catalogues</a>
+                <span class="bg-amber-400 text-blue-950 text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs">Festive Curation 2026</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-3 mb-3 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
+                <p class="text-slate-200 text-sm sm:text-base mb-6">Discover intricate bangles, necklaces, and pendants with Google-Map style interactive Zoom & Pan viewing.</p>
+                <a href="#catalogue-section" class="bg-amber-400 text-blue-950 font-bold px-6 py-3 rounded-xl shadow hover:bg-amber-300 transition text-sm">Explore Catalogues</a>
             </div>
         </div>
 
         <!-- Filters & Sorting Header -->
         <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
-                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-[#9f5c59] text-white shadow-sm' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">All Items</button>
-                <button @click="selectedCategory = 'Necklace'" :class="selectedCategory === 'Necklace' ? 'bg-[#9f5c59] text-white shadow-sm' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Necklaces</button>
-                <button @click="selectedCategory = 'Bangles'" :class="selectedCategory === 'Bangles' ? 'bg-[#9f5c59] text-white shadow-sm' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Bangles</button>
-                <button @click="selectedCategory = 'Hair Accessories'" :class="selectedCategory === 'Hair Accessories' ? 'bg-[#9f5c59] text-white shadow-sm' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Hair Accessories</button>
-                <button @click="selectedCategory = 'Pendants'" :class="selectedCategory === 'Pendants' ? 'bg-[#9f5c59] text-white shadow-sm' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Pendants</button>
+                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
+                <button @click="selectedCategory = 'Necklace'" :class="selectedCategory === 'Necklace' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Necklaces</button>
+                <button @click="selectedCategory = 'Bangles'" :class="selectedCategory === 'Bangles' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Bangles</button>
+                <button @click="selectedCategory = 'Hair Accessories'" :class="selectedCategory === 'Hair Accessories' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Hair Accessories</button>
+                <button @click="selectedCategory = 'Pendants'" :class="selectedCategory === 'Pendants' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">Pendants</button>
             </div>
 
             <div class="flex items-center space-x-3">
-                <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Sort By:</span>
-                <select x-model="sortBy" class="bg-white border border-stone-200 text-stone-700 text-sm rounded-xl px-3 py-2 focus:ring-[#9f5c59] focus:border-[#9f5c59]">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sort By:</span>
+                <select x-model="sortBy" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-900 focus:outline-none">
                     <option value="featured">Featured</option>
                     <option value="low-high">Price: Low to High</option>
                     <option value="high-low">Price: High to Low</option>
@@ -94,30 +232,30 @@
         <!-- Product Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <template x-for="item in filteredProducts" :key="item.id">
-                <div class="bg-white rounded-2xl border border-stone-200/80 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition flex flex-col justify-between">
                     <div>
-                        <!-- Product Image thumbnail with 360 Multi-View button -->
-                        <div class="relative h-64 bg-stone-100 overflow-hidden group">
+                        <!-- Product Image thumbnail with Zoom Trigger -->
+                        <div class="relative h-64 bg-slate-100 overflow-hidden group">
                             <img :src="item.images[0]" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-stone-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-xs" x-text="item.category"></span>
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-blue-950 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-xs" x-text="item.category"></span>
                             
-                            <!-- 360 Multi-View Button -->
-                            <button @click="openGallery(item)" class="absolute bottom-3 right-3 bg-stone-900/80 hover:bg-stone-900 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
-                                <svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span class="font-medium" x-text="item.images.length + ' Views (360°)'"></span>
+                            <!-- Interactive Zoom & Pan Button -->
+                            <button @click="openZoomViewer(item)" class="absolute bottom-3 right-3 bg-blue-950/90 hover:bg-blue-950 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
+                                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                                <span class="font-bold">Zoom & Pan View</span>
                             </button>
                         </div>
 
                         <!-- Product Details -->
                         <div class="p-4">
-                            <h3 class="font-bold text-stone-900 text-base mb-1" x-text="item.name"></h3>
-                            <p class="text-stone-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
+                            <h3 class="font-bold text-blue-950 text-base mb-1" x-text="item.name"></h3>
+                            <p class="text-slate-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
                         </div>
                     </div>
 
-                    <div class="p-4 pt-0 flex items-center justify-between border-t border-stone-100 mt-2">
-                        <span class="text-lg font-bold text-[#9f5c59]" x-text="'₹' + item.price"></span>
-                        <button @click="addToCart(item)" class="bg-[#9f5c59] hover:bg-[#8c4a47] text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-xs">
+                    <div class="p-4 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
+                        <span class="text-lg font-bold text-blue-900" x-text="'₹' + item.price"></span>
+                        <button @click="addToCart(item)" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs">
                             Add to Cart
                         </button>
                     </div>
@@ -126,254 +264,40 @@
         </div>
     </main>
 
-    <!-- ================= SECURE OWNER MANAGEMENT DASHBOARD ================= -->
-    <main x-show="activeTab === 'owner'" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h2 class="text-2xl font-bold text-stone-900">Owner Dashboard (Secured)</h2>
-                <p class="text-sm text-stone-500">Add, edit, or modify your jewelry catalogue items and multi-view images.</p>
+    <!-- ================= DEDICATED ABOUT US PAGE ================= -->
+    <main x-show="currentView === 'about'" class="max-w-4xl mx-auto px-4 py-12" x-cloak>
+        <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <h2 class="text-3xl font-extrabold text-blue-950">About DearlyCharms</h2>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic. From traditional temple kempu bangles and statement necklaces to handcrafted hair accessories and pendants, our curation bridges timeless tradition with contemporary grace.</p>
+                <h3 class="font-bold text-blue-950 text-lg pt-2">Our Quality Promise</h3>
+                <p>Every piece is carefully quality-checked and packaged to ensure it reaches your doorstep safely across any pin code in India. We believe every celebration deserves uncompromising beauty.</p>
             </div>
-            <button @click="activeTab = 'shop'; ownerAuthenticated = false;" class="text-xs bg-stone-200 hover:bg-stone-300 text-stone-700 px-3.5 py-2 rounded-xl font-semibold transition">Lock & Return to Store</button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Add / Edit Catalogue Form -->
-            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm h-fit">
-                <h3 class="text-lg font-bold text-stone-900 mb-4 flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-[#9f5c59]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span x-text="editMode ? 'Edit Catalogue Item' : 'Add New Catalogue Item'"></span>
-                </h3>
-
-                <form @submit.prevent="saveProduct" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Item Name</label>
-                        <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Category Type</label>
-                        <select x-model="currentProduct.category" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                            <option value="Necklace">Necklace</option>
-                            <option value="Bangles">Bangles</option>
-                            <option value="Hair Accessories">Hair Accessories</option>
-                            <option value="Pendants">Pendants</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Price (₹)</label>
-                        <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Image URLs (Comma separated for multi-view angles)</label>
-                        <textarea x-model="currentProduct.imageInput" rows="3" placeholder="https://image1.jpg, https://image2.jpg, https://image3.jpg" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]"></textarea>
-                        <p class="text-[11px] text-stone-500 mt-1">💡 Tip: Group 2-3 image links separated by commas so buyers can inspect bangles from different angles.</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Description</label>
-                        <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]"></textarea>
-                    </div>
-
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-[#9f5c59] hover:bg-[#8c4a47] text-white font-semibold py-2.5 rounded-xl text-sm transition shadow-xs" x-text="editMode ? 'Update Catalogue' : 'Publish to Storefront'"></button>
-                        <template x-if="editMode">
-                            <button type="button" @click="resetForm" class="bg-stone-200 hover:bg-stone-300 text-stone-700 px-4 py-2.5 rounded-xl text-sm font-semibold transition">Cancel</button>
-                        </template>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Existing Inventory List with Modify/Delete -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-                <h3 class="text-lg font-bold text-stone-900 mb-4">Manage Catalogues (<span x-text="products.length"></span>)</h3>
-                
-                <div class="divide-y divide-stone-100 overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-xs uppercase text-stone-400 font-semibold tracking-wider border-b border-stone-100">
-                                <th class="py-3 px-2">Item</th>
-                                <th class="py-3 px-2">Category</th>
-                                <th class="py-3 px-2">Views</th>
-                                <th class="py-3 px-2">Price</th>
-                                <th class="py-3 px-2 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y divide-stone-100">
-                            <template x-for="item in products" :key="item.id">
-                                <tr>
-                                    <td class="py-3 px-2 flex items-center space-x-3">
-                                        <img :src="item.images[0]" class="w-10 h-10 rounded-lg object-cover bg-stone-100">
-                                        <div>
-                                            <p class="font-bold text-stone-900" x-text="item.name"></p>
-                                            <p class="text-xs text-stone-500 line-clamp-1" x-text="item.description"></p>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <span class="bg-rose-50 text-[#9f5c59] text-xs font-semibold px-2.5 py-1 rounded-md" x-text="item.category"></span>
-                                    </td>
-                                    <td class="py-3 px-2 text-stone-600 font-medium" x-text="item.images.length + ' angles'"></td>
-                                    <td class="py-3 px-2 font-bold text-[#9f5c59]" x-text="'₹' + item.price"></td>
-                                    <td class="py-3 px-2 text-right space-x-2">
-                                        <button @click="editProduct(item)" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 transition">Edit</button>
-                                        <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-semibold px-2.5 py-1 rounded-lg bg-red-50 transition">Remove</button>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <button @click="currentView = 'shop'" class="bg-blue-900 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-md">Back to Store</button>
         </div>
     </main>
 
-    <!-- ================= CART & COD CHECKOUT SIDEBAR ================= -->
-    <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
-        <div class="absolute inset-0 bg-stone-900/40 backdrop-blur-xs transition-opacity" @click="cartOpen = false"></div>
-        
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-                <div class="p-6 border-b border-stone-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-stone-900">Your Shopping Cart (<span x-text="cart.reduce((s, i) => s + i.qty, 0)"></span>)</h3>
-                    <button @click="cartOpen = false" class="text-stone-400 hover:text-stone-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <template x-if="cart.length === 0">
-                        <div class="text-center py-12 text-stone-400">
-                            <svg class="w-16 h-16 mx-auto mb-3 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                            <p class="font-medium text-stone-600">Your cart is empty.</p>
-                            <p class="text-xs mt-1">Add exquisite imitation items to proceed with Cash on Delivery.</p>
-                        </div>
-                    </template>
-
-                    <template x-for="item in cart" :key="item.id">
-                        <div class="flex items-center justify-between bg-stone-50 p-3 rounded-xl border border-stone-200">
-                            <div class="flex items-center space-x-3">
-                                <img :src="item.images[0]" class="w-14 h-14 object-cover rounded-lg bg-white">
-                                <div>
-                                    <h4 class="font-bold text-sm text-stone-900" x-text="item.name"></h4>
-                                    <p class="text-xs text-[#9f5c59] font-bold" x-text="'₹' + item.price"></p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button @click="updateQty(item.id, -1)" class="w-6 h-6 bg-white border border-stone-300 rounded-md text-xs font-bold flex items-center justify-center">-</button>
-                                <span class="text-sm font-semibold w-5 text-center" x-text="item.qty"></span>
-                                <button @click="updateQty(item.id, 1)" class="w-6 h-6 bg-white border border-stone-300 rounded-md text-xs font-bold flex items-center justify-center">+</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <template x-if="cart.length > 0">
-                    <div class="p-6 border-t border-stone-200 bg-stone-50">
-                        <div class="flex justify-between mb-4">
-                            <span class="text-stone-600 font-medium">Subtotal</span>
-                            <span class="text-lg font-bold text-stone-900" x-text="'₹' + cartTotal"></span>
-                        </div>
-                        <button @click="cartOpen = false; checkoutOpen = true" class="w-full bg-[#9f5c59] hover:bg-[#8c4a47] text-white font-semibold py-3 rounded-xl transition text-center shadow-xs">
-                            Proceed to Cash on Delivery (COD)
-                        </button>
-                    </div>
-                </template>
+    <!-- ================= GOOGLE-MAP STYLE ZOOM & PAN VIEWER ================= -->
+    <div x-show="zoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" x-cloak>
+        <div class="absolute top-6 right-6 z-50 flex items-center space-x-3">
+            <div class="bg-white/20 text-white text-xs px-3 py-1.5 rounded-xl font-bold backdrop-blur">
+                Zoom: <span x-text="Math.round(zoomLevel * 100) + '%'"></span>
             </div>
+            <button @click="zoomLevel = Math.max(1, zoomLevel - 0.5)" class="w-10 h-10 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold flex items-center justify-center text-lg">-</button>
+            <button @click="zoomLevel += 0.5" class="w-10 h-10 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold flex items-center justify-center text-lg">+</button>
+            <button @click="zoomModal = false; zoomLevel = 1;" class="w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold flex items-center justify-center">✕</button>
         </div>
-    </div>
 
-    <!-- ================= CHECKOUT MODAL ================= -->
-    <div x-show="checkoutOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="checkoutOpen = false"></div>
-        
-        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl my-8">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-stone-900">Cash on Delivery Order</h3>
-                    <p class="text-xs text-stone-500">Secure checkout for your DearlyCharms order.</p>
-                </div>
-                <button @click="checkoutOpen = false" class="text-stone-400 hover:text-stone-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-
-            <form @submit.prevent="placeOrder" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">First Name *</label>
-                        <input type="text" x-model="orderForm.firstName" placeholder="Priya" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
+        <div class="relative w-full h-full max-w-5xl max-h-[85vh] overflow-auto flex items-center justify-center rounded-2xl border border-white/10 bg-slate-900 p-4">
+            <template x-if="activeZoomItem">
+                <div class="flex flex-col items-center space-y-4 w-full h-full">
+                    <div class="flex-1 overflow-auto flex items-center justify-center w-full">
+                        <img :src="activeZoomImage" :style="'transform: scale(' + zoomLevel + '); transition: transform 0.2s ease; cursor: grab;'" class="max-h-[70vh] object-contain rounded-xl">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Last Name *</label>
-                        <input type="text" x-model="orderForm.lastName" placeholder="Sharma" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Delivery Address *</label>
-                    <textarea x-model="orderForm.address" rows="2" placeholder="House/Flat No., Street Name, Locality, Landmark" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]"></textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Pincode *</label>
-                        <input type="text" x-model="orderForm.pincode" placeholder="400001" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Phone Number (Optional)</label>
-                        <input type="tel" x-model="orderForm.phone" placeholder="9876543210" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Email Address (Optional)</label>
-                    <input type="email" x-model="orderForm.email" placeholder="priya@example.com" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-[#9f5c59]">
-                </div>
-
-                <!-- Return & Refund Attestation Box -->
-                <div class="bg-rose-50/70 border border-rose-200 p-4 rounded-xl space-y-2 mt-4">
-                    <div class="flex items-start space-x-3">
-                        <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-rose-300 text-[#9f5c59] focus:ring-[#9f5c59]">
-                        <label class="text-xs text-stone-700 leading-relaxed">
-                            <span class="font-bold text-[#9f5c59]">Return & Refund Policy Attestation:</span> 
-                            I agree that purchased items must be unworn, unused, and undamaged, and returned within <strong class="text-[#9f5c59]">24 hours</strong> of delivery by dispatching back to our official address. 
-                            <br><span class="text-[11px] text-stone-500 mt-1 block">💡 *Note for COD:* If you receive a broken item, take a picture of the item immediately upon opening and send it to us for instant verification and replacement.</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full bg-[#9f5c59] hover:bg-[#8c4a47] text-white font-semibold py-3 rounded-xl transition text-sm shadow-xs">
-                        Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ================= 360 MULTI-VIEW GALLERY MODAL ================= -->
-    <div x-show="galleryModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/80 backdrop-blur-xs" @click="galleryModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-2xl w-full p-6 z-10 shadow-2xl">
-            <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
-                <div>
-                    <h3 class="font-bold text-stone-900 text-lg" x-text="activeGalleryItem ? activeGalleryItem.name : ''"></h3>
-                    <p class="text-xs text-stone-500">360° Multi-Angle View — Click thumbnails below to inspect all angles.</p>
-                </div>
-                <button @click="galleryModal = false" class="text-stone-400 hover:text-stone-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <template x-if="activeGalleryItem">
-                <div class="space-y-4">
-                    <div class="h-80 bg-stone-50 rounded-xl overflow-hidden flex items-center justify-center border border-stone-200">
-                        <img :src="activeGalleryImage" class="max-h-full max-w-full object-contain">
-                    </div>
-                    <!-- Thumbnails selector -->
-                    <div class="flex space-x-3 overflow-x-auto pb-2">
-                        <template x-for="(img, idx) in activeGalleryItem.images" :key="idx">
-                            <button @click="activeGalleryImage = img" :class="activeGalleryImage === img ? 'ring-2 ring-[#9f5c59]' : 'opacity-70'" class="w-16 h-16 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 flex-shrink-0 transition">
+                    <!-- Angle Thumbnails -->
+                    <div class="flex space-x-3 overflow-x-auto pb-2 bg-slate-950/80 p-3 rounded-2xl">
+                        <template x-for="(img, idx) in activeZoomItem.images" :key="idx">
+                            <button @click="activeZoomImage = img" :class="activeZoomImage === img ? 'ring-2 ring-amber-400' : 'opacity-60'" class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 transition">
                                 <img :src="img" class="w-full h-full object-cover">
                             </button>
                         </template>
@@ -383,101 +307,193 @@
         </div>
     </div>
 
-    <!-- ================= ABOUT US & POLICIES MODALS ================= -->
-    <div x-show="aboutModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="aboutModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 z-10 shadow-2xl my-8 max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
-                <h3 class="text-xl font-bold text-[#9f5c59]">About DearlyCharms</h3>
-                <button @click="aboutModal = false" class="text-stone-400 hover:text-stone-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="space-y-4 text-sm text-stone-600 leading-relaxed">
-                <p>Welcome to <strong>DearlyCharms</strong>, your premier destination for exquisite, premium imitation jewelry tailored for Indian festivities, weddings, and everyday grace. From intricate temple bangles to statement necklaces, our pieces offer timeless craftsmanship.</p>
+    <!-- ================= CART & COD CHECKOUT SIDEBAR ================= -->
+    <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
+        <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-xs transition-opacity" @click="cartOpen = false"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-blue-950">Your Shopping Cart (<span x-text="cart.reduce((s, i) => s + i.qty, 0)"></span>)</h3>
+                    <button @click="cartOpen = false" class="text-slate-400 hover:text-slate-700 font-bold text-lg">✕</button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <template x-if="cart.length === 0">
+                        <div class="text-center py-12 text-slate-400">
+                            <p class="font-bold text-slate-600">Your cart is empty.</p>
+                            <p class="text-xs mt-1">Add imitation jewelry items to proceed with Cash on Delivery.</p>
+                        </div>
+                    </template>
+                    <template x-for="item in cart" :key="item.id">
+                        <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                            <div class="flex items-center space-x-3">
+                                <img :src="item.images[0]" class="w-14 h-14 object-cover rounded-xl bg-white border border-slate-200">
+                                <div>
+                                    <h4 class="font-bold text-sm text-blue-950" x-text="item.name"></h4>
+                                    <p class="text-xs text-blue-900 font-bold" x-text="'₹' + item.price"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button @click="updateQty(item.id, -1)" class="w-7 h-7 bg-white border border-slate-300 rounded-lg text-xs font-bold flex items-center justify-center">-</button>
+                                <span class="text-sm font-bold w-5 text-center" x-text="item.qty"></span>
+                                <button @click="updateQty(item.id, 1)" class="w-7 h-7 bg-white border border-slate-300 rounded-lg text-xs font-bold flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <template x-if="cart.length > 0">
+                    <div class="p-6 border-t border-slate-200 bg-slate-50">
+                        <div class="flex justify-between mb-4">
+                            <span class="text-slate-600 font-bold text-sm">Subtotal</span>
+                            <span class="text-lg font-bold text-blue-950" x-text="'₹' + cartTotal"></span>
+                        </div>
+                        <button @click="cartOpen = false; checkoutOpen = true" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-center shadow-md text-sm">
+                            Proceed to Cash on Delivery (COD)
+                        </button>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="bg-stone-900 text-stone-300 pt-12 pb-8 mt-20 border-t border-stone-800">
+    <!-- ================= CHECKOUT MODAL & POLICY ATTESTATION ================= -->
+    <div x-show="checkoutOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="checkoutOpen = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl my-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-blue-950">Cash on Delivery Order</h3>
+                    <p class="text-xs text-slate-500">Secure checkout for your DearlyCharms order.</p>
+                </div>
+                <button @click="checkoutOpen = false" class="text-slate-400 font-bold text-lg">✕</button>
+            </div>
+            <form @submit.prevent="placeOrder" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">First Name *</label>
+                        <input type="text" x-model="orderForm.firstName" placeholder="Priya" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Last Name *</label>
+                        <input type="text" x-model="orderForm.lastName" placeholder="Sharma" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Delivery Address *</label>
+                    <textarea x-model="orderForm.address" rows="2" placeholder="House/Flat No., Street Name, Locality, Landmark" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Pincode *</label>
+                        <input type="text" x-model="orderForm.pincode" placeholder="400001" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Phone Number (Optional)</label>
+                        <input type="tel" x-model="orderForm.phone" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email Address (Optional)</label>
+                    <input type="email" x-model="orderForm.email" placeholder="priya@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                </div>
+                <!-- Attestation Box -->
+                <div class="bg-blue-50/70 border border-blue-200 p-4 rounded-2xl space-y-2 mt-4">
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-blue-300 text-blue-900 focus:ring-blue-900">
+                        <label class="text-xs text-slate-700 leading-relaxed">
+                            <span class="font-bold text-blue-950">Return & Refund Policy Attestation:</span> 
+                            I agree items must be unworn and returned within <strong class="text-blue-900">24 hours</strong> of delivery by dispatching back to the official address. 
+                            <br><span class="text-[11px] text-slate-500 mt-1 block">💡 *COD Notice:* If a broken item is received, take a picture immediately at unboxing for instant verification.</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-sm shadow-md">
+                        Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= FOOTER WITH GENERAL POLICIES & FAQS ================= -->
+    <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 mt-20 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
                 <h4 class="text-white font-bold text-base mb-3">DearlyCharms</h4>
-                <p class="text-xs text-stone-400 leading-relaxed">Exquisite imitation jewelry for the modern Indian aesthetic. Crafted with love, delivered to your doorstep.</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Exquisite imitation jewelry for the modern Indian aesthetic. Crafted with love, delivered to your doorstep.</p>
             </div>
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="aboutModal = true" class="hover:text-rose-300 transition">About Us</button></li>
-                    <li><button @click="activeTab = 'shop'" class="hover:text-rose-300 transition">Shop Catalogues</button></li>
-                    <li><button @click="faqModal = true" class="hover:text-rose-300 transition">General FAQs</button></li>
+                    <li><button @click="currentView = 'about'" class="hover:text-amber-400 transition">About Us</button></li>
+                    <li><button @click="currentView = 'shop'" class="hover:text-amber-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="faqModal = true" class="hover:text-amber-400 transition">General FAQs</button></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Policies</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="returnModal = true" class="hover:text-rose-300 transition">Returns & Cancellation</button></li>
-                    <li><button @click="shippingModal = true" class="hover:text-rose-300 transition">Shipping & Delivery</button></li>
-                    <li><button @click="privacyModal = true" class="hover:text-rose-300 transition">Privacy Policy</button></li>
+                    <li><button @click="returnModal = true" class="hover:text-amber-400 transition">Returns & Cancellation</button></li>
+                    <li><button @click="shippingModal = true" class="hover:text-amber-400 transition">Shipping & Delivery</button></li>
+                    <li><button @click="privacyModal = true" class="hover:text-amber-400 transition">Privacy Policy</button></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Customer Support</h4>
-                <p class="text-xs text-stone-400 mb-1">India Support Hours: Mon - Sat (10 AM - 7 PM)</p>
-                <p class="text-xs text-stone-400">Email: support@dearlycharms.com</p>
+                <p class="text-xs text-slate-400 mb-1">India Support Hours: Mon - Sat (10 AM - 7 PM)</p>
+                <p class="text-xs text-slate-400">Email: support@dearlycharms.com</p>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-stone-800 pt-6 text-center text-xs text-stone-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
             &copy; 2026 DearlyCharms. All rights reserved. Built for Indian Online Shoppers.
         </div>
     </footer>
 
     <!-- POLICY & FAQ MODALS -->
     <div x-show="returnModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="returnModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-stone-900 text-lg mb-3">Returns & Cancellation Policy</h3>
-            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                Items purchased can be returned within **24 hours** of delivery. To be eligible, items must be unused, unblemished, and in original packaging. You must dispatch the package back to our official address. <br><br>
-                <strong>Damaged Items (COD):</strong> If you receive a broken item, take a photo immediately at the time of delivery/unboxing and share it with us for instant replacement verification.
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="returnModal = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-slate-900 text-lg mb-3">Returns & Cancellation Policy</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                Items purchased must be unused and returned within **24 hours** of delivery by dispatching back to our official address.<br><br>
+                <strong>Broken Items (COD):</strong> Take a photo immediately upon opening if a broken item is received for instant verification.
             </p>
-            <button @click="returnModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+            <button @click="returnModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
 
     <div x-show="shippingModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="shippingModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-stone-900 text-lg mb-3">Shipping & Delivery</h3>
-            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                We ship across all major pin codes in India via trusted courier partners. Standard delivery takes 3 to 6 business days. Free shipping is applicable on all prepaid and COD orders above ₹999.
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="shippingModal = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-slate-900 text-lg mb-3">Shipping & Delivery</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                We ship across all major pin codes in India via trusted courier partners. Standard delivery takes 3 to 6 business days. Free shipping applies on orders above ₹999.
             </p>
-            <button @click="shippingModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+            <button @click="shippingModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
 
     <div x-show="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="privacyModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-stone-900 text-lg mb-3">Privacy Policy & Security Notice</h3>
-            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                We collect your name, shipping address, pincode, and optional contact details solely to fulfill your orders and contact you regarding delivery updates. <br><br>
-                🔒 <strong class="text-stone-900">User Security Best Practice:</strong> We advise customers to safeguard their account passwords, avoid sharing personal order credentials on public forums, and ensure they log out when using shared devices.
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="privacyModal = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-slate-900 text-lg mb-3">Privacy Policy & Security Notice</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                We collect your name, shipping address, pincode, and contact details solely to fulfill orders.<br><br>
+                🔒 <strong class="text-slate-900">User Security:</strong> Safeguard your personal credentials and log out when using shared devices.
             </p>
-            <button @click="privacyModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+            <button @click="privacyModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
 
     <div x-show="faqModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
-        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs" @click="faqModal = false"></div>
-        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-stone-900 text-lg mb-3">General FAQs</h3>
-            <div class="space-y-3 text-xs text-stone-600 mb-4">
-                <p><strong>Q: Is Cash on Delivery available everywhere in India?</strong><br>A: Yes, COD is available across most pin codes.</p>
-                <p><strong>Q: Will imitation jewelry lose polish?</strong><br>A: To maintain the shine, keep away from perfumes, sweat, and moisture.</p>
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="faqModal = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-slate-900 text-lg mb-3">General FAQs</h3>
+            <div class="space-y-3 text-xs text-slate-600 mb-4">
+                <p><strong>Q: Is Cash on Delivery available across India?</strong><br>A: Yes, COD is supported for all major pin codes.</p>
+                <p><strong>Q: How to maintain imitation jewelry?</strong><br>A: Keep away from moisture, perfumes, and sweat to preserve polish.</p>
             </div>
-            <button @click="faqModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+            <button @click="faqModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
 
@@ -485,41 +501,41 @@
     <script>
         function storeData() {
             return {
-                activeTab: 'shop',
-                ownerAuthenticated: false,
+                isOwnerUrl: window.location.search.includes('owner=true'),
+                ownerLoggedIn: false,
+                ownerPasscode: localStorage.getItem('dc_owner_pass') || '1234',
+                enteredPassword: '',
+                newOwnerPass: '',
+                ownerTab: 'inventory',
+                
+                currentView: 'shop',
                 selectedCategory: 'All',
                 sortBy: 'featured',
                 cartOpen: false,
                 checkoutOpen: false,
-                aboutModal: false,
+                
                 returnModal: false,
                 shippingModal: false,
                 privacyModal: false,
                 faqModal: false,
-                galleryModal: false,
-                activeGalleryItem: null,
-                activeGalleryImage: '',
-                
+
+                zoomModal: false,
+                activeZoomItem: null,
+                activeZoomImage: '',
+                zoomLevel: 1,
+
                 editMode: false,
                 editId: null,
 
                 cart: [],
                 
-                orderForm: {
-                    firstName: '',
-                    lastName: '',
-                    address: '',
-                    pincode: '',
-                    phone: '',
-                    email: '',
-                    attested: false
-                },
+                orderForm: { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false },
 
                 currentProduct: {
                     name: '',
                     category: 'Bangles',
                     price: '',
-                    imageInput: '',
+                    images: [],
                     description: ''
                 },
 
@@ -531,34 +547,38 @@
                         price: 1299,
                         images: [
                             'https://images.unsplash.com/photo-1611591475253-5d5e2171c89f?auto=format&fit=crop&w=600&q=80',
-                            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80',
-                            'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80'
+                            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80'
                         ],
-                        description: 'Exquisite multi-layered temple jewellery kempu stone bangles with complete 360 multi-view angles.'
-                    },
-                    {
-                        id: 2,
-                        name: 'Zircon Diamond Layered Necklace',
-                        category: 'Necklace',
-                        price: 2499,
-                        images: [
-                            'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80',
-                            'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=600&q=80'
-                        ],
-                        description: 'Sparkling American diamond choker necklace matching bridal and reception outfits.'
+                        description: 'Exquisite multi-layered temple jewellery kempu stone bangles with map-style zoom view.'
                     }
                 ],
 
-                checkOwnerAccess() {
-                    if (this.ownerAuthenticated) {
-                        this.activeTab = 'owner';
+                loginOwner() {
+                    if (this.enteredPassword === this.ownerPasscode) {
+                        this.ownerLoggedIn = true;
                     } else {
-                        let pin = prompt("Enter Owner Security PIN (Default is 1234):");
-                        if (pin === "1234") {
-                            this.ownerAuthenticated = true;
-                            this.activeTab = 'owner';
-                        } else if (pin !== null) {
-                            alert("Incorrect PIN! Access denied.");
+                        alert('Incorrect passcode! Please try again.');
+                    }
+                },
+
+                updatePassword() {
+                    if (this.newOwnerPass.trim().length > 0) {
+                        this.ownerPasscode = this.newOwnerPass;
+                        localStorage.setItem('dc_owner_pass', this.newOwnerPass);
+                        alert('Owner password updated successfully!');
+                        this.newOwnerPass = '';
+                    }
+                },
+
+                handleImageUpload(event) {
+                    const files = event.target.files;
+                    if (files.length > 0) {
+                        for (let i = 0; i < files.length; i++) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.currentProduct.images.push(e.target.result);
+                            };
+                            reader.readAsDataURL(files[i]);
                         }
                     }
                 },
@@ -600,10 +620,11 @@
                     }
                 },
 
-                openGallery(item) {
-                    this.activeGalleryItem = item;
-                    this.activeGalleryImage = item.images[0];
-                    this.galleryModal = true;
+                openZoomViewer(item) {
+                    this.activeZoomItem = item;
+                    this.activeZoomImage = item.images[0];
+                    this.zoomLevel = 1;
+                    this.zoomModal = true;
                 },
 
                 editProduct(item) {
@@ -613,20 +634,23 @@
                         name: item.name,
                         category: item.category,
                         price: item.price,
-                        imageInput: item.images.join(', '),
+                        images: [...item.images],
                         description: item.description
                     };
+                    this.ownerTab = 'inventory';
                 },
 
                 resetForm() {
                     this.editMode = false;
                     this.editId = null;
-                    this.currentProduct = { name: '', category: 'Bangles', price: '', imageInput: '', description: '' };
+                    this.currentProduct = { name: '', category: 'Bangles', price: '', images: [], description: '' };
                 },
 
                 saveProduct() {
-                    let imgs = this.currentProduct.imageInput.split(',').map(s => s.trim()).filter(Boolean);
-                    if (imgs.length === 0) imgs = ['https://images.unsplash.com/photo-1611591475253-5d5e2171c89f'];
+                    if (this.currentProduct.images.length === 0) {
+                        alert('Please upload at least one image from your device.');
+                        return;
+                    }
 
                     if (this.editMode) {
                         let p = this.products.find(item => item.id === this.editId);
@@ -634,7 +658,7 @@
                             p.name = this.currentProduct.name;
                             p.category = this.currentProduct.category;
                             p.price = Number(this.currentProduct.price);
-                            p.images = imgs;
+                            p.images = [...this.currentProduct.images];
                             p.description = this.currentProduct.description;
                         }
                         alert('Catalogue updated successfully!');
@@ -644,7 +668,7 @@
                             name: this.currentProduct.name,
                             category: this.currentProduct.category,
                             price: Number(this.currentProduct.price),
-                            images: imgs,
+                            images: [...this.currentProduct.images],
                             description: this.currentProduct.description
                         };
                         this.products.unshift(newObj);
@@ -660,7 +684,7 @@
                 },
 
                 placeOrder() {
-                    alert('Order placed successfully via Cash on Delivery! Thank you, ' + this.orderForm.firstName + '. We will contact you soon.');
+                    alert('Order placed successfully via Cash on Delivery! Thank you, ' + this.orderForm.firstName + '. We will contact you shortly.');
                     this.cart = [];
                     this.checkoutOpen = false;
                     this.orderForm = { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false };
