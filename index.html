@@ -7,62 +7,69 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .theme-btn { background-color: rgb(231, 111, 69); }
+        .theme-btn:hover { background-color: rgb(205, 93, 53); }
+        .theme-text { color: rgb(231, 111, 69); }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800" x-data="storeData()">
 
-    <div class="bg-blue-900 text-amber-200 text-xs py-2 px-4 text-center font-bold tracking-wide">
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-[rgb(231,111,69)] text-white text-xs py-2 px-4 text-center font-bold tracking-wide">
         ✨ Free Shipping Across India on Orders Above ₹999 | Cash on Delivery Available ✨
     </div>
 
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <!-- MAIN HEADER (Hidden when About Us is open) -->
+    <header x-show="currentView !== 'about'" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'shop'">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-900 to-indigo-700 flex items-center justify-center text-amber-300 font-bold text-xl shadow-md">DC</div>
+                <div class="w-11 h-11 rounded-2xl theme-btn flex items-center justify-center text-white font-bold text-xl shadow-md">DC</div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-blue-950">DearlyCharms</h1>
-                    <p class="text-[10px] uppercase tracking-widest text-amber-700 font-extrabold">Imitation Jewelry</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">DearlyCharms</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-[rgb(231,111,69)] font-extrabold">Imitation Jewelry</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4 sm:space-x-6">
-                <button @click="currentView = 'about'" :class="currentView === 'about' ? 'text-blue-900 font-bold' : 'text-slate-600'" class="text-sm font-medium hover:text-blue-900 transition">About Us</button>
-                <button @click="cartOpen = true" class="relative p-2 text-slate-700 hover:text-blue-900 transition">
+                <button @click="currentView = 'about'" class="text-sm font-medium text-slate-700 hover:text-[rgb(231,111,69)] transition">About Us</button>
+                <button @click="cartOpen = true" class="relative p-2 text-slate-700 hover:text-[rgb(231,111,69)] transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
+                    <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 theme-btn text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- OWNER LOGIN GATE -->
+    <!-- ================= OWNER LOGIN GATE ================= -->
     <main x-show="isOwnerUrl && !ownerLoggedIn" class="max-w-md mx-auto px-4 py-20" x-cloak>
         <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
-            <div class="w-16 h-16 bg-blue-900 text-amber-300 rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg">🔒</div>
+            <div class="w-16 h-16 theme-btn text-white rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg">🔒</div>
             <div>
-                <h2 class="text-2xl font-bold text-blue-950">Owner Access Portal</h2>
+                <h2 class="text-2xl font-bold text-slate-900">Owner Access Portal</h2>
                 <p class="text-xs text-slate-500 mt-1">Enter your management passcode to access DearlyCharms inventory controller.</p>
             </div>
             <form @submit.prevent="loginOwner" class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Passcode</label>
-                    <input type="password" x-model="enteredPassword" placeholder="Enter secure passcode" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    <input type="password" x-model="enteredPassword" placeholder="Enter secure passcode" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                 </div>
-                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition shadow-md text-sm">Authenticate & Enter</button>
+                <button type="submit" class="w-full theme-btn text-white font-bold py-3 rounded-xl transition shadow-md text-sm">Authenticate & Enter</button>
             </form>
         </div>
     </main>
 
-    <!-- OWNER MANAGEMENT DASHBOARD -->
+    <!-- ================= OWNER MANAGEMENT DASHBOARD ================= -->
     <main x-show="isOwnerUrl && ownerLoggedIn" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
             <div class="flex items-center space-x-3">
                 <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
-                <h2 class="text-xl font-bold text-blue-950">Owner Command Center</h2>
+                <h2 class="text-xl font-bold text-slate-900">Owner Command Center</h2>
             </div>
             <div class="flex items-center space-x-2">
-                <button @click="ownerTab = 'inventory'" :class="ownerTab === 'inventory' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Inventory & Categories</button>
-                <button @click="ownerTab = 'preview'" :class="ownerTab === 'preview' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Test Buyer Storefront</button>
-                <button @click="ownerTab = 'profile'" :class="ownerTab === 'profile' ? 'bg-blue-900 text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Owner Profile / Security</button>
+                <button @click="ownerTab = 'inventory'" :class="ownerTab === 'inventory' ? 'theme-btn text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Inventory & Categories</button>
+                <button @click="ownerTab = 'preview'" :class="ownerTab === 'preview' ? 'theme-btn text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Test Buyer Storefront</button>
+                <button @click="ownerTab = 'profile'" :class="ownerTab === 'profile' ? 'theme-btn text-white' : 'bg-slate-100 text-slate-700'" class="px-4 py-2 rounded-xl text-xs font-bold transition">Owner Profile / Security</button>
             </div>
         </div>
 
@@ -70,24 +77,24 @@
             <div class="space-y-6">
                 <!-- Add New Category Box -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-blue-950">📁 Add New Category</h3>
+                    <h3 class="text-base font-bold text-slate-900">📁 Add New Category</h3>
                     <form @submit.prevent="addCategory" class="space-y-3">
-                        <input type="text" x-model="newCategoryName" placeholder="e.g., Earrings, Rings" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
-                        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">Create Category Button</button>
+                        <input type="text" x-model="newCategoryName" placeholder="e.g., Earrings, Rings" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
+                        <button type="submit" class="w-full theme-btn text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">Create Category Button</button>
                     </form>
                 </div>
 
                 <!-- Add/Edit Catalogue Form -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-blue-950" x-text="editMode ? '✏️ Edit Catalogue' : '✨ Add New Jewellery Catalogue'"></h3>
+                    <h3 class="text-base font-bold text-slate-900" x-text="editMode ? '✏️ Edit Catalogue' : '✨ Add New Jewellery Catalogue'"></h3>
                     <form @submit.prevent="saveProduct" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Item Name</label>
-                            <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <input type="text" x-model="currentProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Category Type</label>
-                            <select x-model="currentProduct.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <select x-model="currentProduct.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                                 <template x-for="cat in categories" :key="cat">
                                     <option :value="cat" x-text="cat"></option>
                                 </template>
@@ -95,19 +102,19 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Price (₹)</label>
-                            <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images from Mobile/Desktop</label>
-                            <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-900 hover:file:bg-blue-100 cursor-pointer">
+                            <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-[rgb(231,111,69)] hover:file:bg-orange-100 cursor-pointer">
                             <p class="text-[11px] text-slate-400 mt-1" x-text="currentProduct.images.length + ' image(s) loaded.'"></p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Description</label>
-                            <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                            <textarea x-model="currentProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none"></textarea>
                         </div>
                         <div class="flex space-x-2">
-                            <button type="submit" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm" x-text="editMode ? 'Save Changes' : 'Publish Catalogue'"></button>
+                            <button type="submit" class="flex-1 theme-btn text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm" x-text="editMode ? 'Save Changes' : 'Publish Catalogue'"></button>
                             <template x-if="editMode">
                                 <button type="button" @click="resetForm" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition">Cancel</button>
                             </template>
@@ -117,7 +124,7 @@
             </div>
 
             <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <h3 class="text-base font-bold text-blue-950 mb-4">Active Catalogues (<span x-text="products.length"></span>)</h3>
+                <h3 class="text-base font-bold text-slate-900 mb-4">Active Catalogues (<span x-text="products.length"></span>)</h3>
                 <div class="divide-y divide-slate-100 overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -135,13 +142,13 @@
                                     <td class="py-3 px-2 flex items-center space-x-3">
                                         <img :src="item.images[0]" class="w-12 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200">
                                         <div>
-                                            <p class="font-bold text-blue-950" x-text="item.name"></p>
+                                            <p class="font-bold text-slate-900" x-text="item.name"></p>
                                             <p class="text-xs text-slate-500 line-clamp-1" x-text="item.description"></p>
                                         </div>
                                     </td>
-                                    <td class="py-3 px-2"><span class="bg-blue-50 text-blue-900 text-xs font-bold px-2.5 py-1 rounded-md" x-text="item.category"></span></td>
+                                    <td class="py-3 px-2"><span class="bg-orange-50 text-[rgb(231,111,69)] text-xs font-bold px-2.5 py-1 rounded-md" x-text="item.category"></span></td>
                                     <td class="py-3 px-2 font-medium text-slate-600" x-text="item.images.length + ' imgs'"></td>
-                                    <td class="py-3 px-2 font-bold text-blue-900" x-text="'₹' + item.price"></td>
+                                    <td class="py-3 px-2 font-bold theme-text" x-text="'₹' + item.price"></td>
                                     <td class="py-3 px-2 text-right space-x-2">
                                         <button @click="editProduct(item)" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-50 transition">Edit</button>
                                         <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 transition">Remove</button>
@@ -162,39 +169,39 @@
         </div>
 
         <div x-show="ownerTab === 'profile'" class="max-w-md mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-            <h3 class="text-lg font-bold text-blue-950">Owner Profile & Security</h3>
+            <h3 class="text-lg font-bold text-slate-900">Owner Profile & Security</h3>
             <form @submit.prevent="updatePassword" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">New Management Passcode</label>
-                    <input type="text" x-model="newOwnerPass" placeholder="Enter new password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    <input type="text" x-model="newOwnerPass" placeholder="Enter new password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                 </div>
-                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-sm shadow-md">Update Passcode</button>
+                <button type="submit" class="w-full theme-btn text-white font-bold py-3 rounded-xl transition text-sm shadow-md">Update Passcode</button>
             </form>
         </div>
     </main>
 
-    <!-- BUYER STOREFRONT -->
+    <!-- ================= BUYER STOREFRONT ================= -->
     <main x-show="!isOwnerUrl || (isOwnerUrl && ownerLoggedIn && ownerTab === 'preview')" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
-        <div class="relative rounded-3xl bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 text-white p-8 sm:p-12 mb-10 overflow-hidden shadow-xl">
+        <div class="relative rounded-3xl theme-btn text-white p-8 sm:p-12 mb-10 overflow-hidden shadow-xl">
             <div class="relative z-10 max-w-xl">
-                <span class="bg-amber-400 text-blue-950 text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs">Festive Curation 2026</span>
+                <span class="bg-white/20 backdrop-blur text-white text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs">Festive Curation 2026</span>
                 <h2 class="text-3xl sm:text-4xl font-bold mt-3 mb-3 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
-                <p class="text-slate-200 text-sm sm:text-base mb-6">Discover intricate bangles, necklaces, and pendants with Google-Map style interactive Zoom & Pan viewing.</p>
-                <a href="#catalogue-section" class="bg-amber-400 text-blue-950 font-bold px-6 py-3 rounded-xl shadow hover:bg-amber-300 transition text-sm">Explore Catalogues</a>
+                <p class="text-orange-50 text-sm sm:text-base mb-6">Discover intricate bangles, necklaces, and pendants with Google-Map style interactive Zoom & Pan viewing.</p>
+                <a href="#catalogue-section" class="bg-white text-[rgb(231,111,69)] font-bold px-6 py-3 rounded-xl shadow hover:bg-orange-50 transition text-sm">Explore Catalogues</a>
             </div>
         </div>
 
         <!-- Dynamic Category Filter Buttons -->
         <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
-                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
+                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
                 <template x-for="cat in categories" :key="cat">
-                    <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-blue-900 text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap" x-text="cat"></button>
+                    <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap" x-text="cat"></button>
                 </template>
             </div>
             <div class="flex items-center space-x-3">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sort By:</span>
-                <select x-model="sortBy" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                <select x-model="sortBy" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     <option value="featured">Featured</option>
                     <option value="low-high">Price: Low to High</option>
                     <option value="high-low">Price: High to Low</option>
@@ -209,38 +216,44 @@
                     <div>
                         <div class="relative h-64 bg-slate-100 overflow-hidden group">
                             <img :src="item.images[0]" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-blue-950 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-xs" x-text="item.category"></span>
-                            <button @click="openZoomViewer(item)" class="absolute bottom-3 right-3 bg-blue-950/90 hover:bg-blue-950 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
-                                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-xs" x-text="item.category"></span>
+                            <button @click="openZoomViewer(item)" class="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
+                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
                                 <span class="font-bold">Zoom & Pan View</span>
                             </button>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-blue-950 text-base mb-1" x-text="item.name"></h3>
+                            <h3 class="font-bold text-slate-900 text-base mb-1" x-text="item.name"></h3>
                             <p class="text-slate-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
                         </div>
                     </div>
                     <div class="p-4 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
-                        <span class="text-lg font-bold text-blue-900" x-text="'₹' + item.price"></span>
-                        <button @click="addToCart(item)" class="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs">Add to Cart</button>
+                        <span class="text-lg font-bold theme-text" x-text="'₹' + item.price"></span>
+                        <button @click="addToCart(item)" class="theme-btn text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs">Add to Cart</button>
                     </div>
                 </div>
             </template>
         </div>
     </main>
 
-    <!-- DEDICATED ABOUT US PAGE -->
-    <main x-show="currentView === 'about'" class="max-w-4xl mx-auto px-4 py-12" x-cloak>
-        <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-            <h2 class="text-3xl font-extrabold text-blue-950">About DearlyCharms</h2>
-            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
-                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic.</p>
+    <!-- ================= DEDICATED ABOUT US PAGE (Center Screen with Return Home) ================= -->
+    <main x-show="currentView === 'about'" class="max-w-4xl mx-auto px-4 py-20 min-h-[80vh] flex flex-col items-center justify-center text-center" x-cloak>
+        <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl space-y-6 w-full">
+            <h2 class="text-3xl font-extrabold text-slate-900">About DearlyCharms</h2>
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed text-left">
+                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic. From traditional temple kempu bangles and statement necklaces to handcrafted hair accessories and pendants, our curation bridges timeless tradition with contemporary grace.</p>
+                <p>Every piece is carefully quality-checked and packaged to ensure it reaches your doorstep safely across any pin code in India. We believe every celebration deserves uncompromising beauty.</p>
             </div>
-            <button @click="currentView = 'shop'" class="bg-blue-900 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-md">Back to Store</button>
+            <div class="pt-4">
+                <button @click="currentView = 'shop'" class="theme-btn text-white font-bold px-8 py-3 rounded-2xl text-sm transition shadow-lg inline-flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>Return Home</span>
+                </button>
+            </div>
         </div>
     </main>
 
-    <!-- ZOOM VIEWER -->
+    <!-- ================= GOOGLE-MAP STYLE ZOOM & PAN VIEWER ================= -->
     <div x-show="zoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" x-cloak>
         <div class="absolute top-6 right-6 z-50 flex items-center space-x-3">
             <div class="bg-white/20 text-white text-xs px-3 py-1.5 rounded-xl font-bold backdrop-blur">Zoom: <span x-text="Math.round(zoomLevel * 100) + '%'"></span></div>
@@ -256,7 +269,7 @@
                     </div>
                     <div class="flex space-x-3 overflow-x-auto pb-2 bg-slate-950/80 p-3 rounded-2xl">
                         <template x-for="(img, idx) in activeZoomItem.images" :key="idx">
-                            <button @click="activeZoomImage = img" :class="activeZoomImage === img ? 'ring-2 ring-amber-400' : 'opacity-60'" class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 transition">
+                            <button @click="activeZoomImage = img" :class="activeZoomImage === img ? 'ring-2 ring-[rgb(231,111,69)]' : 'opacity-60'" class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 flex-shrink-0 transition">
                                 <img :src="img" class="w-full h-full object-cover">
                             </button>
                         </template>
@@ -266,13 +279,13 @@
         </div>
     </div>
 
-    <!-- CART SIDEBAR -->
+    <!-- ================= CART SIDEBAR ================= -->
     <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
         <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-xs" @click="cartOpen = false"></div>
         <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
             <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
                 <div class="p-6 border-b border-slate-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-blue-950">Your Shopping Cart (<span x-text="cart.reduce((s, i) => s + i.qty, 0)"></span>)</h3>
+                    <h3 class="text-lg font-bold text-slate-900">Your Shopping Cart (<span x-text="cart.reduce((s, i) => s + i.qty, 0)"></span>)</h3>
                     <button @click="cartOpen = false" class="text-slate-400 font-bold text-lg">✕</button>
                 </div>
                 <div class="flex-1 overflow-y-auto p-6 space-y-4">
@@ -287,8 +300,8 @@
                             <div class="flex items-center space-x-3">
                                 <img :src="item.images[0]" class="w-14 h-14 object-cover rounded-xl bg-white border border-slate-200">
                                 <div>
-                                    <h4 class="font-bold text-sm text-blue-950" x-text="item.name"></h4>
-                                    <p class="text-xs text-blue-900 font-bold" x-text="'₹' + item.price"></p>
+                                    <h4 class="font-bold text-sm text-slate-900" x-text="item.name"></h4>
+                                    <p class="text-xs theme-text font-bold" x-text="'₹' + item.price"></p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
@@ -303,22 +316,22 @@
                     <div class="p-6 border-t border-slate-200 bg-slate-50">
                         <div class="flex justify-between mb-4">
                             <span class="text-slate-600 font-bold text-sm">Subtotal</span>
-                            <span class="text-lg font-bold text-blue-950" x-text="'₹' + cartTotal"></span>
+                            <span class="text-lg font-bold text-slate-900" x-text="'₹' + cartTotal"></span>
                         </div>
-                        <button @click="cartOpen = false; checkoutOpen = true" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-center shadow-md text-sm">Proceed to Cash on Delivery (COD)</button>
+                        <button @click="cartOpen = false; checkoutOpen = true" class="w-full theme-btn text-white font-bold py-3 rounded-xl transition text-center shadow-md text-sm">Proceed to Cash on Delivery (COD)</button>
                     </div>
                 </template>
             </div>
         </div>
     </div>
 
-    <!-- CHECKOUT MODAL -->
+    <!-- ================= CHECKOUT MODAL (Mandatory Phone Number, No Hints for Optional) ================= -->
     <div x-show="checkoutOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="checkoutOpen = false"></div>
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl my-8">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h3 class="text-xl font-bold text-blue-950">Cash on Delivery Order</h3>
+                    <h3 class="text-xl font-bold text-slate-900">Cash on Delivery Order</h3>
                     <p class="text-xs text-slate-500">Secure checkout for your DearlyCharms order.</p>
                 </div>
                 <button @click="checkoutOpen = false" class="text-slate-400 font-bold text-lg">✕</button>
@@ -327,43 +340,43 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">First Name *</label>
-                        <input type="text" x-model="orderForm.firstName" placeholder="Priya" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        <input type="text" x-model="orderForm.firstName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Last Name *</label>
-                        <input type="text" x-model="orderForm.lastName" placeholder="Sharma" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        <input type="text" x-model="orderForm.lastName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Delivery Address *</label>
-                    <textarea x-model="orderForm.address" rows="2" placeholder="House/Flat No., Street Name, Locality, Landmark" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                    <textarea x-model="orderForm.address" rows="2" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Pincode *</label>
-                        <input type="text" x-model="orderForm.pincode" placeholder="400001" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        <input type="text" x-model="orderForm.pincode" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Phone Number (Optional)</label>
-                        <input type="tel" x-model="orderForm.phone" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Phone Number *</label>
+                        <input type="tel" x-model="orderForm.phone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email Address (Optional)</label>
-                    <input type="email" x-model="orderForm.email" placeholder="priya@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email Address</label>
+                    <input type="email" x-model="orderForm.email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                 </div>
-                <div class="bg-blue-50/70 border border-blue-200 p-4 rounded-2xl space-y-2 mt-4">
+                <div class="bg-orange-50/70 border border-orange-200 p-4 rounded-2xl space-y-2 mt-4">
                     <div class="flex items-start space-x-3">
-                        <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-blue-300 text-blue-900 focus:ring-blue-900">
+                        <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-orange-300 text-[rgb(231,111,69)] focus:ring-[rgb(231,111,69)]">
                         <label class="text-xs text-slate-700 leading-relaxed">
-                            <span class="font-bold text-blue-950">Return & Refund Policy Attestation:</span> 
-                            I agree items must be unworn and returned within <strong class="text-blue-900">24 hours</strong> of delivery by dispatching back to the official address. 
+                            <span class="font-bold text-slate-900">Return & Refund Policy Attestation:</span> 
+                            I agree items must be unworn and returned within <strong class="theme-text">24 hours</strong> of delivery by dispatching back to the official address. 
                             <br><span class="text-[11px] text-slate-500 mt-1 block">💡 *COD Notice:* If a broken item is received, take a picture immediately at unboxing for verification.</span>
                         </label>
                     </div>
                 </div>
                 <div class="pt-2">
-                    <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition text-sm shadow-md">Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span></button>
+                    <button type="submit" class="w-full theme-btn text-white font-bold py-3 rounded-xl transition text-sm shadow-md">Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span></button>
                 </div>
             </form>
         </div>
@@ -379,17 +392,17 @@
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="currentView = 'about'" class="hover:text-amber-400 transition">About Us</button></li>
-                    <li><button @click="currentView = 'shop'" class="hover:text-amber-400 transition">Shop Catalogues</button></li>
-                    <li><button @click="faqModal = true" class="hover:text-amber-400 transition">General FAQs</button></li>
+                    <li><button @click="currentView = 'about'" class="hover:text-orange-400 transition">About Us</button></li>
+                    <li><button @click="currentView = 'shop'" class="hover:text-orange-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="faqModal = true" class="hover:text-orange-400 transition">General FAQs</button></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Policies</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="returnModal = true" class="hover:text-amber-400 transition">Returns & Cancellation</button></li>
-                    <li><button @click="shippingModal = true" class="hover:text-amber-400 transition">Shipping & Delivery</button></li>
-                    <li><button @click="privacyModal = true" class="hover:text-amber-400 transition">Privacy Policy</button></li>
+                    <li><button @click="returnModal = true" class="hover:text-orange-400 transition">Returns & Cancellation</button></li>
+                    <li><button @click="shippingModal = true" class="hover:text-orange-400 transition">Shipping & Delivery</button></li>
+                    <li><button @click="privacyModal = true" class="hover:text-orange-400 transition">Privacy Policy</button></li>
                 </ul>
             </div>
             <div>
@@ -407,7 +420,7 @@
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
             <h3 class="font-bold text-slate-900 text-lg mb-3">Returns & Cancellation Policy</h3>
             <p class="text-xs text-slate-600 leading-relaxed mb-4">Items purchased must be unused and returned within **24 hours** of delivery by dispatching back to our official address.</p>
-            <button @click="returnModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
+            <button @click="returnModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="shippingModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
@@ -415,7 +428,7 @@
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
             <h3 class="font-bold text-slate-900 text-lg mb-3">Shipping & Delivery</h3>
             <p class="text-xs text-slate-600 leading-relaxed mb-4">We ship across India. Standard delivery takes 3 to 6 business days. Free shipping above ₹999.</p>
-            <button @click="shippingModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
+            <button @click="shippingModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
@@ -423,7 +436,7 @@
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
             <h3 class="font-bold text-slate-900 text-lg mb-3">Privacy Policy & Security</h3>
             <p class="text-xs text-slate-600 leading-relaxed mb-4">We collect details solely to fulfill orders. Safeguard your personal credentials.</p>
-            <button @click="privacyModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
+            <button @click="privacyModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="faqModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
@@ -431,11 +444,11 @@
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
             <h3 class="font-bold text-slate-900 text-lg mb-3">General FAQs</h3>
             <p class="text-xs text-slate-600 leading-relaxed mb-4">COD is available across India. Keep imitation jewelry away from moisture and perfumes.</p>
-            <button @click="faqModal = false" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
+            <button @click="faqModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC WITH DYNAMIC CATEGORIES -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         function storeData() {
             return {
