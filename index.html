@@ -21,10 +21,10 @@
         ✨ Free Shipping Across India on Orders Above ₹999 | Cash on Delivery Available ✨
     </div>
 
-    <!-- MAIN HEADER (Hidden when About Us is open) -->
-    <header x-show="currentView !== 'about'" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'shop'">
+            <div class="flex items-center space-x-3 cursor-pointer" @click="scrollToCatalog">
                 <div class="w-11 h-11 rounded-2xl theme-btn flex items-center justify-center text-white font-bold text-xl shadow-md">DC</div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-slate-900">DearlyCharms</h1>
@@ -32,7 +32,6 @@
                 </div>
             </div>
             <div class="flex items-center space-x-4 sm:space-x-6">
-                <button @click="currentView = 'about'" class="text-sm font-medium text-slate-700 hover:text-[rgb(231,111,69)] transition">About Us</button>
                 <button @click="cartOpen = true" class="relative p-2 text-slate-700 hover:text-[rgb(231,111,69)] transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 theme-btn text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
@@ -41,7 +40,7 @@
         </div>
     </header>
 
-    <!-- ================= OWNER LOGIN GATE ================= -->
+    <!-- OWNER LOGIN GATE -->
     <main x-show="isOwnerUrl && !ownerLoggedIn" class="max-w-md mx-auto px-4 py-20" x-cloak>
         <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
             <div class="w-16 h-16 theme-btn text-white rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg">🔒</div>
@@ -59,7 +58,7 @@
         </div>
     </main>
 
-    <!-- ================= OWNER MANAGEMENT DASHBOARD ================= -->
+    <!-- OWNER MANAGEMENT DASHBOARD -->
     <main x-show="isOwnerUrl && ownerLoggedIn" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
             <div class="flex items-center space-x-3">
@@ -180,14 +179,15 @@
         </div>
     </main>
 
-    <!-- ================= BUYER STOREFRONT ================= -->
+    <!-- BUYER STOREFRONT -->
     <main x-show="!isOwnerUrl || (isOwnerUrl && ownerLoggedIn && ownerTab === 'preview')" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
-        <div class="relative rounded-3xl theme-btn text-white p-8 sm:p-12 mb-10 overflow-hidden shadow-xl">
+        <!-- Compact Hero Banner -->
+        <div class="relative rounded-3xl theme-btn text-white p-6 sm:p-8 mb-8 overflow-hidden shadow-lg">
             <div class="relative z-10 max-w-xl">
-                <span class="bg-white/20 backdrop-blur text-white text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs">Festive Curation 2026</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-3 mb-3 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
-                <p class="text-orange-50 text-sm sm:text-base mb-6">Discover intricate bangles, necklaces, and pendants with Google-Map style interactive Zoom & Pan viewing.</p>
-                <a href="#catalogue-section" class="bg-white text-[rgb(231,111,69)] font-bold px-6 py-3 rounded-xl shadow hover:bg-orange-50 transition text-sm">Explore Catalogues</a>
+                <span class="bg-white/20 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">Festive Curation 2026</span>
+                <h2 class="text-2xl sm:text-3xl font-bold mt-2 mb-2 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
+                <p class="text-orange-50 text-xs sm:text-sm mb-4">Discover intricate bangles, necklaces, and pendants.</p>
+                <button @click="scrollToCatalog" class="bg-white text-[rgb(231,111,69)] font-bold px-5 py-2.5 rounded-xl shadow hover:bg-orange-50 transition text-xs">Explore Catalogues</button>
             </div>
         </div>
 
@@ -236,24 +236,7 @@
         </div>
     </main>
 
-    <!-- ================= DEDICATED ABOUT US PAGE (Center Screen with Return Home) ================= -->
-    <main x-show="currentView === 'about'" class="max-w-4xl mx-auto px-4 py-20 min-h-[80vh] flex flex-col items-center justify-center text-center" x-cloak>
-        <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl space-y-6 w-full">
-            <h2 class="text-3xl font-extrabold text-slate-900">About DearlyCharms</h2>
-            <div class="space-y-4 text-sm text-slate-600 leading-relaxed text-left">
-                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic. From traditional temple kempu bangles and statement necklaces to handcrafted hair accessories and pendants, our curation bridges timeless tradition with contemporary grace.</p>
-                <p>Every piece is carefully quality-checked and packaged to ensure it reaches your doorstep safely across any pin code in India. We believe every celebration deserves uncompromising beauty.</p>
-            </div>
-            <div class="pt-4">
-                <button @click="currentView = 'shop'" class="theme-btn text-white font-bold px-8 py-3 rounded-2xl text-sm transition shadow-lg inline-flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                    <span>Return Home</span>
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <!-- ================= GOOGLE-MAP STYLE ZOOM & PAN VIEWER ================= -->
+    <!-- ZOOM VIEWER -->
     <div x-show="zoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" x-cloak>
         <div class="absolute top-6 right-6 z-50 flex items-center space-x-3">
             <div class="bg-white/20 text-white text-xs px-3 py-1.5 rounded-xl font-bold backdrop-blur">Zoom: <span x-text="Math.round(zoomLevel * 100) + '%'"></span></div>
@@ -279,7 +262,7 @@
         </div>
     </div>
 
-    <!-- ================= CART SIDEBAR ================= -->
+    <!-- CART SIDEBAR -->
     <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
         <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-xs" @click="cartOpen = false"></div>
         <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
@@ -325,7 +308,7 @@
         </div>
     </div>
 
-    <!-- ================= CHECKOUT MODAL (Mandatory Phone Number, No Hints for Optional) ================= -->
+    <!-- CHECKOUT MODAL -->
     <div x-show="checkoutOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="checkoutOpen = false"></div>
         <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl my-8">
@@ -392,8 +375,8 @@
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="currentView = 'about'" class="hover:text-orange-400 transition">About Us</button></li>
-                    <li><button @click="currentView = 'shop'" class="hover:text-orange-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="aboutModal = true" class="hover:text-orange-400 transition">About Us</button></li>
+                    <li><button @click="scrollToCatalog" class="hover:text-orange-400 transition">Shop Catalogues</button></li>
                     <li><button @click="faqModal = true" class="hover:text-orange-400 transition">General FAQs</button></li>
                 </ul>
             </div>
@@ -408,42 +391,50 @@
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Customer Support</h4>
                 <p class="text-xs text-slate-400 mb-1">India Support Hours: Mon - Sat (10 AM - 7 PM)</p>
-                <p class="text-xs text-slate-400">Email: support@dearlycharms.com</p>
+                <p class="text-xs text-slate-400">Email: dlakshyaofficial@gmail.com</p>
             </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800 pt-6 text-center text-xs text-slate-500">&copy; 2026 DearlyCharms. All rights reserved.</div>
     </footer>
 
-    <!-- POLICY MODALS -->
+    <!-- UNIFORM POLICY & ABOUT US MODALS -->
+    <div x-show="aboutModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="aboutModal = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-lg">About DearlyCharms</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Welcome to <strong>DearlyCharms</strong>, your ultimate online destination for exquisite imitation jewelry tailored specifically for the modern Indian aesthetic. From traditional temple kempu bangles and statement necklaces to handcrafted hair accessories and pendants, our curation bridges timeless tradition with contemporary grace.</p>
+            <button @click="aboutModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
+        </div>
+    </div>
     <div x-show="returnModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="returnModal = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-slate-900 text-lg mb-3">Returns & Cancellation Policy</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-4">Items purchased must be unused and returned within **24 hours** of delivery by dispatching back to our official address.</p>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-lg">Returns & Cancellation Policy</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Items purchased must be unused and returned within <strong>24 hours</strong> of delivery by dispatching back to our official address.</p>
             <button @click="returnModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="shippingModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="shippingModal = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-slate-900 text-lg mb-3">Shipping & Delivery</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-4">We ship across India. Standard delivery takes 3 to 6 business days. Free shipping above ₹999.</p>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-lg">Shipping & Delivery</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">We ship across India. Standard delivery takes 3 to 6 business days. Free shipping above ₹999.</p>
             <button @click="shippingModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="privacyModal = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-slate-900 text-lg mb-3">Privacy Policy & Security</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-4">We collect details solely to fulfill orders. Safeguard your personal credentials.</p>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-lg">Privacy Policy & Security</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">We collect details solely to fulfill orders. Safeguard your personal credentials.</p>
             <button @click="privacyModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
     <div x-show="faqModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
         <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="faqModal = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl">
-            <h3 class="font-bold text-slate-900 text-lg mb-3">General FAQs</h3>
-            <p class="text-xs text-slate-600 leading-relaxed mb-4">COD is available across India. Keep imitation jewelry away from moisture and perfumes.</p>
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 z-10 shadow-2xl space-y-4">
+            <h3 class="font-bold text-slate-900 text-lg">General FAQs</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">COD is available across India. Keep imitation jewelry away from moisture and perfumes.</p>
             <button @click="faqModal = false" class="w-full theme-btn text-white py-2.5 rounded-xl text-xs font-bold">Close</button>
         </div>
     </div>
@@ -459,11 +450,11 @@
                 newOwnerPass: '',
                 ownerTab: 'inventory',
                 
-                currentView: 'shop',
                 selectedCategory: 'All',
                 sortBy: 'featured',
                 cartOpen: false,
                 checkoutOpen: false,
+                aboutModal: false,
                 returnModal: false,
                 shippingModal: false,
                 privacyModal: false,
@@ -504,6 +495,10 @@
                     }
                 ],
 
+                scrollToCatalog() {
+                    document.getElementById('catalogue-section').scrollIntoView({ behavior: 'smooth' });
+                },
+
                 saveToStorage() {
                     localStorage.setItem('dc_products', JSON.stringify(this.products));
                     localStorage.setItem('dc_categories', JSON.stringify(this.categories));
@@ -514,7 +509,7 @@
                     if (cat && !this.categories.includes(cat)) {
                         this.categories.push(cat);
                         this.saveToStorage();
-                        alert(`Category "${cat}" created successfully! It is now available in your dropdown and buyer filters.`);
+                        alert(`Category "${cat}" created successfully!`);
                         this.newCategoryName = '';
                     } else {
                         alert('Category name is empty or already exists.');
@@ -654,7 +649,22 @@
                 },
 
                 placeOrder() {
-                    alert('Order placed successfully via Cash on Delivery! Thank you, ' + this.orderForm.firstName + '. We will contact you shortly.');
+                    // Format order details for email dispatch
+                    let orderSummary = `New Cash on Delivery Order - DearlyCharms\n\n` +
+                        `Customer Name: ${this.orderForm.firstName} ${this.orderForm.lastName}\n` +
+                        `Delivery Address: ${this.orderForm.address}\n` +
+                        `Pincode: ${this.orderForm.pincode}\n` +
+                        `Phone Number: ${this.orderForm.phone}\n` +
+                        `Email: ${this.orderForm.email || 'N/A'}\n\n` +
+                        `Items Ordered:\n` +
+                        this.cart.map(i => `- ${i.name} (${i.category}) x ${i.qty} = ₹${i.price * i.qty}`).join('\n') +
+                        `\n\nTotal Amount: ₹${this.cartTotal}`;
+
+                    // Trigger mailto link to dlakshyaofficial@gmail.com
+                    let mailtoLink = `mailto:dlakshyaofficial@gmail.com?subject=New COD Order - ${this.orderForm.firstName} ${this.orderForm.lastName}&body=` + encodeURIComponent(orderSummary);
+                    window.location.href = mailtoLink;
+
+                    alert('Order placed successfully! Preparing email notification to dlakshyaofficial@gmail.com...');
                     this.cart = [];
                     this.checkoutOpen = false;
                     this.orderForm = { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false };
