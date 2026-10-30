@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DearlyCharms - Exquisite Imitation Jewelry</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800" x-data="storeData()">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-amber-800 text-amber-100 text-xs py-1.5 px-4 text-center font-medium tracking-wide">
+        ✨ Free Shipping Across India on Orders Above ₹999 | Cash on Delivery Available ✨
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-stone-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'shop'">
+                <div class="w-10 h-10 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 font-bold text-xl">
+                    DC
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-amber-900">DearlyCharms</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-stone-500 font-semibold">Imitation Jewelry</p>
+                </div>
+            </div>
+
+            <!-- Navigation & Actions -->
+            <div class="flex items-center space-x-4 sm:space-x-6">
+                <!-- Role Switcher (Owner vs Buyer) -->
+                <div class="bg-stone-100 p-1 rounded-lg border border-stone-200 flex text-xs font-semibold">
+                    <button @click="activeTab = 'shop'" :class="activeTab === 'shop' ? 'bg-white text-amber-900 shadow-sm' : 'text-stone-600'" class="px-3 py-1.5 rounded-md transition">Buyer View</button>
+                    <button @click="activeTab = 'owner'" :class="activeTab === 'owner' ? 'bg-amber-900 text-white shadow-sm' : 'text-stone-600'" class="px-3 py-1.5 rounded-md transition">Owner Dashboard</button>
+                </div>
+
+                <!-- Cart Button (Buyer only) -->
+                <button x-show="activeTab === 'shop'" @click="cartOpen = true" class="relative p-2 text-stone-700 hover:text-amber-800 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span x-show="cart.length > 0" x-text="cart.reduce((sum, item) => sum + item.qty, 0)" class="absolute top-0 right-0 bg-amber-800 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
+                </button>
+
+                <!-- About Us Button -->
+                <button @click="aboutModal = true" class="hidden sm:inline-flex text-sm font-medium text-stone-700 hover:text-amber-900 transition">
+                    About Us
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= BUYER STOREFRONT ================= -->
+    <main x-show="activeTab === 'shop'" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Banner -->
+        <div class="relative rounded-2xl bg-amber-900 text-amber-50 p-8 sm:p-12 mb-10 overflow-hidden shadow-md">
+            <div class="relative z-10 max-w-xl">
+                <span class="bg-amber-800 text-amber-200 text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full">New Festive Collection</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-3 mb-3 tracking-tight">Timeless Elegance, Crafted for Every Indian Occasion.</h2>
+                <p class="text-amber-100 text-sm sm:text-base mb-6">Explore our handpicked curation of premium imitation necklaces, bangles, hair accessories, and statement pendants.</p>
+                <a href="#catalogue-section" class="bg-white text-amber-900 font-semibold px-6 py-3 rounded-xl shadow hover:bg-amber-50 transition text-sm">Shop Collection</a>
+            </div>
+        </div>
+
+        <!-- Filters & Sorting Header -->
+        <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
+                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-amber-900 text-white' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">All Items</button>
+                <button @click="selectedCategory = 'Necklace'" :class="selectedCategory === 'Necklace' ? 'bg-amber-900 text-white' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Necklaces</button>
+                <button @click="selectedCategory = 'Bangles'" :class="selectedCategory === 'Bangles' ? 'bg-amber-900 text-white' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Bangles</button>
+                <button @click="selectedCategory = 'Hair Accessories'" :class="selectedCategory === 'Hair Accessories' ? 'bg-amber-900 text-white' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Hair Accessories</button>
+                <button @click="selectedCategory = 'Pendants'" :class="selectedCategory === 'Pendants' ? 'bg-amber-900 text-white' : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'" class="px-4 py-2 rounded-xl text-sm font-medium transition whitespace-nowrap">Pendants</button>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Sort By:</span>
+                <select x-model="sortBy" class="bg-white border border-stone-200 text-stone-700 text-sm rounded-xl px-3 py-2 focus:ring-amber-800 focus:border-amber-800">
+                    <option value="featured">Featured</option>
+                    <option value="low-high">Price: Low to High</option>
+                    <option value="high-low">Price: High to Low</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <template x-for="item in filteredProducts" :key="item.id">
+                <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <!-- Product Image thumbnail with multi-image badge -->
+                        <div class="relative h-64 bg-stone-100 overflow-hidden group">
+                            <img :src="item.images[0]" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-stone-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider" x-text="item.category"></span>
+                            
+                            <!-- Multi-view indicator if multiple images exist -->
+                            <template x-if="item.images.length > 1">
+                                <button @click="openGallery(item)" class="absolute bottom-3 right-3 bg-stone-900/70 hover:bg-stone-900 text-white text-xs px-2.5 py-1 rounded-lg backdrop-blur flex items-center space-x-1 transition">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    <span x-text="item.images.length + ' Views'"></span>
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="p-4">
+                            <h3 class="font-bold text-stone-900 text-base mb-1" x-text="item.name"></h3>
+                            <p class="text-stone-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0 flex items-center justify-between border-t border-stone-100 mt-2">
+                        <span class="text-lg font-bold text-amber-900" x-text="'₹' + item.price"></span>
+                        <button @click="addToCart(item)" class="bg-amber-900 hover:bg-amber-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-sm">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <!-- ================= OWNER MANAGEMENT DASHBOARD ================= -->
+    <main x-show="activeTab === 'owner'" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-stone-900">Owner Dashboard</h2>
+            <p class="text-sm text-stone-500">Manage your imitation jewelry inventory, add multi-view angle items, and track orders.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add New Catalogue Form -->
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm h-fit">
+                <h3 class="text-lg font-bold text-stone-900 mb-4 flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-amber-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Add New Catalogue Item</span>
+                </h3>
+
+                <form @submit.prevent="addNewProduct" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Item Name</label>
+                        <input type="text" x-text="newProduct.name" x-model="newProduct.name" placeholder="e.g., Royal Kempu Stone Bangles" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Category Type</label>
+                        <select x-model="newProduct.category" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                            <option value="Necklace">Necklace</option>
+                            <option value="Bangles">Bangles</option>
+                            <option value="Hair Accessories">Hair Accessories</option>
+                            <option value="Pendants">Pendants</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Price (₹)</label>
+                        <input type="number" x-model.number="newProduct.price" placeholder="1499" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Image URLs (Comma separated for multi-view)</label>
+                        <textarea x-model="newProduct.imageInput" rows="2" placeholder="https://image1.jpg, https://image2.jpg" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800"></textarea>
+                        <p class="text-[11px] text-stone-500 mt-1">Tip: Paste 2-3 direct image URLs separated by commas so buyers can check multiple views of bangles/necklaces.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Description</label>
+                        <textarea x-model="newProduct.description" rows="3" placeholder="Gold-plated antique finish bangle set..." required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-amber-900 hover:bg-amber-800 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow-sm">
+                        Publish to Storefront
+                    </button>
+                </form>
+            </div>
+
+            <!-- Existing Inventory List -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+                <h3 class="text-lg font-bold text-stone-900 mb-4">Current Catalogues (<span x-text="products.length"></span>)</h3>
+                
+                <div class="divide-y divide-stone-100 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-xs uppercase text-stone-400 font-semibold tracking-wider border-b border-stone-100">
+                                <th class="py-3 px-2">Item</th>
+                                <th class="py-3 px-2">Category</th>
+                                <th class="py-3 px-2">Views</th>
+                                <th class="py-3 px-2">Price</th>
+                                <th class="py-3 px-2 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-stone-100">
+                            <template x-for="item in products" :key="item.id">
+                                <tr>
+                                    <td class="py-3 px-2 flex items-center space-x-3">
+                                        <img :src="item.images[0]" class="w-10 h-10 rounded-lg object-cover bg-stone-100">
+                                        <div>
+                                            <p class="font-bold text-stone-900" x-text="item.name"></p>
+                                            <p class="text-xs text-stone-500 line-clamp-1" x-text="item.description"></p>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-2">
+                                        <span class="bg-amber-50 text-amber-900 text-xs font-semibold px-2.5 py-1 rounded-md" x-text="item.category"></span>
+                                    </td>
+                                    <td class="py-3 px-2 text-stone-600 font-medium" x-text="item.images.length + ' imgs'"></td>
+                                    <td class="py-3 px-2 font-bold text-amber-900" x-text="'₹' + item.price"></td>
+                                    <td class="py-3 px-2 text-right">
+                                        <button @click="deleteProduct(item.id)" class="text-red-500 hover:text-red-700 text-xs font-semibold px-2.5 py-1 rounded-lg bg-red-50 transition">Remove</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= CART & COD CHECKOUT SIDEBAR ================= -->
+    <div x-show="cartOpen" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
+        <div class="absolute inset-0 bg-stone-900/40 backdrop-blur-sm transition-opacity" @click="cartOpen = false"></div>
+        
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <!-- Cart Header -->
+                <div class="p-6 border-b border-stone-200 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-stone-900">Your Shopping Cart (<span x-text="cart.reduce((s, i) => s + i.qty, 0)"></span>)</h3>
+                    <button @click="cartOpen = false" class="text-stone-400 hover:text-stone-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Cart Items Body -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <template x-if="cart.length === 0">
+                        <div class="text-center py-12 text-stone-400">
+                            <svg class="w-16 h-16 mx-auto mb-3 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <p class="font-medium text-stone-600">Your cart is empty.</p>
+                            <p class="text-xs mt-1">Add imitation jewelry items to proceed with Cash on Delivery.</p>
+                        </div>
+                    </template>
+
+                    <template x-for="item in cart" :key="item.id">
+                        <div class="flex items-center justify-between bg-stone-50 p-3 rounded-xl border border-stone-200">
+                            <div class="flex items-center space-x-3">
+                                <img :src="item.images[0]" class="w-14 h-14 object-cover rounded-lg bg-white">
+                                <div>
+                                    <h4 class="font-bold text-sm text-stone-900" x-text="item.name"></h4>
+                                    <p class="text-xs text-amber-900 font-bold" x-text="'₹' + item.price"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button @click="updateQty(item.id, -1)" class="w-6 h-6 bg-white border border-stone-300 rounded-md text-xs font-bold flex items-center justify-center">-</button>
+                                <span class="text-sm font-semibold w-5 text-center" x-text="item.qty"></span>
+                                <button @click="updateQty(item.id, 1)" class="w-6 h-6 bg-white border border-stone-300 rounded-md text-xs font-bold flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Cart Footer / COD Checkout trigger -->
+                <template x-if="cart.length > 0">
+                    <div class="p-6 border-t border-stone-200 bg-stone-50">
+                        <div class="flex justify-between mb-4">
+                            <span class="text-stone-600 font-medium">Subtotal</span>
+                            <span class="text-lg font-bold text-stone-900" x-text="'₹' + cartTotal"></span>
+                        </div>
+                        <button @click="cartOpen = false; checkoutOpen = true" class="w-full bg-amber-900 hover:bg-amber-800 text-white font-semibold py-3 rounded-xl transition text-center shadow">
+                            Proceed to Cash on Delivery (COD)
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CHECKOUT MODAL (COD & POLICY ATTESTATION) ================= -->
+    <div x-show="checkoutOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="checkoutOpen = false"></div>
+        
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl my-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-stone-900">Cash on Delivery Order</h3>
+                    <p class="text-xs text-stone-500">Secure checkout for your DearlyCharms order.</p>
+                </div>
+                <button @click="checkoutOpen = false" class="text-stone-400 hover:text-stone-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <form @submit.prevent="placeOrder" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">First Name *</label>
+                        <input type="text" x-model="orderForm.firstName" placeholder="Priya" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Last Name *</label>
+                        <input type="text" x-model="orderForm.lastName" placeholder="Sharma" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Delivery Address *</label>
+                    <textarea x-model="orderForm.address" rows="2" placeholder="House/Flat No., Street Name, Locality, Landmark" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Pincode *</label>
+                        <input type="text" x-model="orderForm.pincode" placeholder="400001" required class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Phone Number (Optional)</label>
+                        <input type="tel" x-model="orderForm.phone" placeholder="9876543210" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1">Email Address (Optional)</label>
+                    <input type="email" x-model="orderForm.email" placeholder="priya@example.com" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-amber-800">
+                </div>
+
+                <!-- Return & Refund Attestation Box -->
+                <div class="bg-amber-50/70 border border-amber-200 p-4 rounded-xl space-y-2 mt-4">
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-amber-300 text-amber-900 focus:ring-amber-800">
+                        <label class="text-xs text-stone-700 leading-relaxed">
+                            <span class="font-bold text-amber-900">Return & Refund Policy Attestation:</span> 
+                            I agree that purchased items must be unworn, unused, and undamaged, and returned within <strong class="text-amber-900">24 hours</strong> of delivery by dispatching back to our official address. 
+                            <br><span class="text-[11px] text-stone-500 mt-1 block">💡 *Note for COD:* If you receive a damaged/broken item, take a picture of the item immediately upon opening and send it to us for instant verification and replacement.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-amber-900 hover:bg-amber-800 text-white font-semibold py-3 rounded-xl transition text-sm shadow">
+                        Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MULTI-VIEW IMAGE GALLERY MODAL ================= -->
+    <div x-show="galleryModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm" @click="galleryModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-2xl w-full p-6 z-10 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-stone-900 text-lg" x-text="activeGalleryItem ? activeGalleryItem.name + ' - Multi-View' : ''"></h3>
+                <button @click="galleryModal = false" class="text-stone-400 hover:text-stone-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <template x-if="activeGalleryItem">
+                <div class="space-y-4">
+                    <div class="h-80 bg-stone-100 rounded-xl overflow-hidden flex items-center justify-center">
+                        <img :src="activeGalleryImage" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <!-- Thumbnails selector -->
+                    <div class="flex space-x-3 overflow-x-auto pb-2">
+                        <template x-for="(img, idx) in activeGalleryItem.images" :key="idx">
+                            <button @click="activeGalleryImage = img" :class="activeGalleryImage === img ? 'ring-2 ring-amber-800' : 'opacity-70'" class="w-16 h-16 rounded-lg overflow-hidden bg-stone-100 border border-stone-200 flex-shrink-0 transition">
+                                <img :src="img" class="w-full h-full object-cover">
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- ================= ABOUT US & POLICIES MODALS ================= -->
+    <div x-show="aboutModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="aboutModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 z-10 shadow-2xl my-8 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
+                <h3 class="text-xl font-bold text-amber-900">About DearlyCharms</h3>
+                <button @click="aboutModal = false" class="text-stone-400 hover:text-stone-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="space-y-4 text-sm text-stone-600 leading-relaxed">
+                <p>Welcome to <strong>DearlyCharms</strong>, your ultimate destination for exquisite, premium imitation jewelry curated specifically for the modern Indian woman. From stunning necklaces and traditional bangles to chic hair accessories and statement pendants, our pieces bring elegance without compromise.</p>
+                <h4 class="font-bold text-stone-900 pt-2">Our Mission</h4>
+                <p>To make traditional and contemporary craftsmanship accessible for every festive occasion, wedding, and daily elegance.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FOOTER WITH GENERAL POLICIES & FAQS ================= -->
+    <footer class="bg-stone-900 text-stone-300 pt-12 pb-8 mt-20 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <h4 class="text-white font-bold text-base mb-3">DearlyCharms</h4>
+                <p class="text-xs text-stone-400 leading-relaxed">Exquisite imitation jewelry for the modern Indian aesthetic. Crafted with love, delivered to your doorstep.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><button @click="aboutModal = true" class="hover:text-amber-400 transition">About Us</button></li>
+                    <li><button @click="activeTab = 'shop'" class="hover:text-amber-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="faqModal = true" class="hover:text-amber-400 transition">General FAQs</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Policies</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><button @click="returnModal = true" class="hover:text-amber-400 transition">Returns & Cancellation</button></li>
+                    <li><button @click="shippingModal = true" class="hover:text-amber-400 transition">Shipping & Delivery</button></li>
+                    <li><button @click="privacyModal = true" class="hover:text-amber-400 transition">Privacy Policy</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Customer Support</h4>
+                <p class="text-xs text-stone-400 mb-1">India Support Hours: Mon - Sat (10 AM - 7 PM)</p>
+                <p class="text-xs text-stone-400">Email: support@dearlycharms.com</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-stone-800 pt-6 text-center text-xs text-stone-500">
+            &copy; 2026 DearlyCharms. All rights reserved. Built for Indian Online Shoppers.
+        </div>
+    </footer>
+
+    <!-- POLICY & FAQ MODALS -->
+    <!-- Returns Modal -->
+    <div x-show="returnModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="returnModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-stone-900 text-lg mb-3">Returns & Cancellation Policy</h3>
+            <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                Items purchased can be returned within **24 hours** of delivery. To be eligible, items must be unused, unblemished, and in original packaging. You must dispatch the package back to our official address. <br><br>
+                <strong>Damaged Items (COD):</strong> If you receive a broken item, take a photo immediately at the time of delivery/unboxing and share it with us for an instant replacement verification.
+            </p>
+            <button @click="returnModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!-- Shipping Modal -->
+    <div x-show="shippingModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="shippingModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-stone-900 text-lg mb-3">Shipping & Delivery</h3>
+            <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                We ship across all major pin codes in India via trusted courier partners. Standard delivery takes 3 to 6 business days. Free shipping is applicable on all prepaid and COD orders above ₹999.
+            </p>
+            <button @click="shippingModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div x-show="privacyModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="privacyModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-stone-900 text-lg mb-3">Privacy Policy & Security Notice</h3>
+            <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                We collect your name, shipping address, pincode, and optional contact details solely to fulfill your orders and contact you regarding delivery updates. <br><br>
+                🔒 <strong class="text-stone-900">User Security Best Practice:</strong> We advise customers to safeguard their account passwords, avoid sharing personal order credentials on public forums, and ensure they log out when using shared devices.
+            </p>
+            <button @click="privacyModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!-- FAQs Modal -->
+    <div x-show="faqModal" class="fixed inset-0 z-50 flex items-center justify-center px-4" x-cloak>
+        <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm" @click="faqModal = false"></div>
+        <div class="relative bg-white rounded-2xl max-w-lg w-full p-6 z-10 shadow-2xl">
+            <h3 class="font-bold text-stone-900 text-lg mb-3">General FAQs</h3>
+            <div class="space-y-3 text-xs text-stone-600 mb-4">
+                <p><strong>Q: Is Cash on Delivery available everywhere in India?</strong><br>A: Yes, COD is available across most pin codes.</p>
+                <p><strong>Q: Will imitation jewelry lose polish?</strong><br>A: To maintain the shine, keep away from perfumes, sweat, and moisture.</p>
+            </div>
+            <button @click="faqModal = false" class="w-full bg-stone-900 text-white py-2 rounded-xl text-xs font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!--JAVASCRIPT LOGIC-->
+    <script>
+        function storeData() {
+            return {
+                activeTab: 'shop',
+                selectedCategory: 'All',
+                sortBy: 'featured',
+                cartOpen: false,
+                checkoutOpen: false,
+                aboutModal: false,
+                returnModal: false,
+                shippingModal: false,
+                privacyModal: false,
+                faqModal: false,
+                galleryModal: false,
+                activeGalleryItem: null,
+                activeGalleryImage: '',
+                
+                cart: [],
+                
+                orderForm: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    pincode: '',
+                    phone: '',
+                    email: '',
+                    attested: false
+                },
+
+                newProduct: {
+                    name: '',
+                    category: 'Bangles',
+                    price: '',
+                    imageInput: '',
+                    description: ''
+                },
+
+                products: [
+                    {
+                        id: 1,
+                        name: 'Royal Antique Kempu Bangles Set',
+                        category: 'Bangles',
+                        price: 1299,
+                        images: [
+                            'https://images.unsplash.com/photo-1611591475253-5d5e2171c89f?auto=format&fit=crop&w=600&q=80',
+                            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80'
+                        ],
+                        description: 'Exquisite multi-layered temple jewellery kempu stone bangles. Designed with dual-view finish.'
+                    },
+                    {
+                        id: 2,
+                        name: 'Zircon Diamond Layered Necklace',
+                        category: 'Necklace',
+                        price: 2499,
+                        images: [
+                            'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80'
+                        ],
+                        description: 'Sparkling American diamond choker necklace matching bridal and reception outfits.'
+                    },
+                    {
+                        id: 3,
+                        name: 'Traditional Pearl Jhumka Hair Pin',
+                        category: 'Hair Accessories',
+                        price: 599,
+                        images: [
+                            'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80'
+                        ],
+                        description: 'Handcrafted floral hair accessory adorned with imitation pearls for buns and braids.'
+                    },
+                    {
+                        id: 4,
+                        name: 'Solitaire Peepal Leaf Pendant',
+                        category: 'Pendants',
+                        price: 899,
+                        images: [
+                            'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=600&q=80'
+                        ],
+                        description: 'Graceful gold-plated leaf motif pendant with matching delicate chain.'
+                    }
+                ],
+
+                get filteredProducts() {
+                    let result = this.products;
+                    if (this.selectedCategory !== 'All') {
+                        result = result.filter(p => p.category === this.selectedCategory);
+                    }
+                    if (this.sortBy === 'low-high') {
+                        result = [...result].sort((a, b) => a.price - b.price);
+                    } else if (this.sortBy === 'high-low') {
+                        result = [...result].sort((a, b) => b.price - a.price);
+                    }
+                    return result;
+                },
+
+                get cartTotal() {
+                    return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                },
+
+                addToCart(item) {
+                    let existing = this.cart.find(i => i.id === item.id);
+                    if (existing) {
+                        existing.qty++;
+                    } else {
+                        this.cart.push({ ...item, qty: 1 });
+                    }
+                    this.cartOpen = true;
+                },
+
+                updateQty(id, change) {
+                    let item = this.cart.find(i => i.id === id);
+                    if (item) {
+                        item.qty += change;
+                        if (item.qty <= 0) {
+                            this.cart = this.cart.filter(i => i.id !== id);
+                        }
+                    }
+                },
+
+                openGallery(item) {
+                    this.activeGalleryItem = item;
+                    this.activeGalleryImage = item.images[0];
+                    this.galleryModal = true;
+                },
+
+                addNewProduct() {
+                    let imgs = this.newProduct.imageInput.split(',').map(s => s.trim()).filter(Boolean);
+                    if (imgs.length === 0) imgs = ['https://images.unsplash.com/photo-1611591475253-5d5e2171c89f'];
+
+                    let newObj = {
+                        id: Date.now(),
+                        name: this.newProduct.name,
+                        category: this.newProduct.category,
+                        price: Number(this.newProduct.price),
+                        images: imgs,
+                        description: this.newProduct.description
+                    };
+
+                    this.products.unshift(newObj);
+                    
+                    // Reset form
+                    this.newProduct.name = '';
+                    this.newProduct.price = '';
+                    this.newProduct.imageInput = '';
+                    this.newProduct.description = '';
+                    
+                    alert('Catalogue added successfully and live on the storefront!');
+                },
+
+                deleteProduct(id) {
+                    if (confirm('Are you sure you want to remove this catalog item?')) {
+                        this.products = this.products.filter(p => p.id !== id);
+                    }
+                },
+
+                placeOrder() {
+                    alert('Order placed successfully via Cash on Delivery! Thank you, ' + this.orderForm.firstName + '. We will contact you soon.');
+                    this.cart = [];
+                    this.checkoutOpen = false;
+                    // Reset form
+                    this.orderForm = { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false };
+                }
+            }
+        }
+    </script>
+</body>
+</html>
