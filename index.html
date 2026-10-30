@@ -16,21 +16,17 @@
 </head>
 <body class="bg-slate-50 text-slate-800" x-data="storeData()">
 
-    <!-- TOP ANNOUNCEMENT BAR -->
-    <div class="bg-[rgb(231,111,69)] text-white text-xs py-2 px-4 text-center font-bold tracking-wide">
-        ✨ Free Shipping Across India on Orders Above ₹999 | Cash on Delivery Available ✨
-    </div>
-
     <!-- MAIN HEADER -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" @click="scrollToCatalog">
+            <div class="flex items-center space-x-3 cursor-pointer" @click="currentView = 'shop'; scrollToCatalog()">
                 <div class="w-11 h-11 rounded-2xl theme-btn flex items-center justify-center text-white font-bold text-xl shadow-md">DC</div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-slate-900">DearlyCharms</h1>
                     <p class="text-[10px] uppercase tracking-widest text-[rgb(231,111,69)] font-extrabold">Imitation Jewelry</p>
                 </div>
             </div>
+            
             <div class="flex items-center space-x-4 sm:space-x-6">
                 <button @click="cartOpen = true" class="relative p-2 text-slate-700 hover:text-[rgb(231,111,69)] transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -40,7 +36,7 @@
         </div>
     </header>
 
-    <!-- OWNER LOGIN GATE -->
+    <!-- OWNER LOGIN GATE (URL ?owner=true but not logged in) -->
     <main x-show="isOwnerUrl && !ownerLoggedIn" class="max-w-md mx-auto px-4 py-20" x-cloak>
         <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
             <div class="w-16 h-16 theme-btn text-white rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg">🔒</div>
@@ -104,7 +100,7 @@
                             <input type="number" x-model.number="currentProduct.price" placeholder="1499" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images from Mobile/Desktop</label>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Upload Images (Select 2-3 angles)</label>
                             <input type="file" @change="handleImageUpload" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-[rgb(231,111,69)] hover:file:bg-orange-100 cursor-pointer">
                             <p class="text-[11px] text-slate-400 mt-1" x-text="currentProduct.images.length + ' image(s) loaded.'"></p>
                         </div>
@@ -196,68 +192,104 @@
         </div>
     </main>
 
-    <!-- BUYER STOREFRONT -->
-    <main x-show="!isOwnerUrl || (isOwnerUrl && ownerLoggedIn && ownerTab === 'preview')" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-cloak>
-        <div class="relative rounded-3xl theme-btn text-white p-6 sm:p-8 mb-8 overflow-hidden shadow-lg">
-            <div class="relative z-10 max-w-xl">
-                <span class="bg-white/20 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">Festive Curation 2026</span>
-                <h2 class="text-2xl sm:text-3xl font-bold mt-2 mb-2 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
-                <p class="text-orange-50 text-xs sm:text-sm mb-4">Discover intricate bangles, necklaces, and pendants.</p>
-                <button @click="scrollToCatalog" class="bg-white text-[rgb(231,111,69)] font-bold px-5 py-2.5 rounded-xl shadow hover:bg-orange-50 transition text-xs">Explore Catalogues</button>
-            </div>
-        </div>
-
-        <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
-                <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
-                <template x-for="cat in categories" :key="cat">
-                    <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap" x-text="cat"></button>
-                </template>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sort By:</span>
-                <select x-model="sortBy" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
-                    <option value="featured">Featured</option>
-                    <option value="low-high">Price: Low to High</option>
-                    <option value="high-low">Price: High to Low</option>
-                </select>
-            </div>
-        </div>
-
-        <template x-if="filteredProducts.length === 0">
-            <div class="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-xs">
-                <p class="text-slate-500 font-bold text-base">No catalogues available to display right now.</p>
-                <p class="text-slate-400 text-xs mt-1">Check back soon or add items via the owner link.</p>
+    <!-- BUYER STOREFRONT (Default View) -->
+    <main x-show="!isOwnerUrl || (isOwnerUrl && ownerLoggedIn && ownerTab === 'preview')" x-cloak>
+        
+        <!-- FULL-PAGE ABOUT US VIEW -->
+        <template x-if="currentView === 'about'">
+            <div class="max-w-4xl mx-auto px-4 py-16 space-y-8 animate-fadeIn">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-6">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-[rgb(231,111,69)] font-extrabold">Brand Heritage</span>
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-1">About DearlyCharms</h2>
+                    </div>
+                    <button @click="currentView = 'shop'" class="theme-btn text-white text-xs font-bold px-5 py-3 rounded-xl shadow transition flex items-center space-x-2">
+                        <span>← Return Home</span>
+                    </button>
+                </div>
+                <div class="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 text-slate-600 leading-relaxed text-sm sm:text-base">
+                    <p>Welcome to <strong class="text-slate-900">DearlyCharms</strong>, your ultimate destination for exquisite imitation jewelry tailored for the modern Indian aesthetic. We curate timeless elegance, capturing the royal allure of traditional temple jewellery, kempu stones, and intricate craftsmanship without compromise.</p>
+                    <p>Every piece in our collection—from multi-layered necklaces and classic bangles to delicate pendants and hair accessories—undergoes strict quality evaluation to ensure lasting festive radiance. Our mission is to make luxury accessible, letting you celebrate every occasion with unmatched grace.</p>
+                    <div class="bg-orange-50 border border-orange-200 p-6 rounded-2xl">
+                        <h4 class="font-bold text-slate-900 mb-2">Our Quality Commitment</h4>
+                        <p class="text-xs text-slate-600">We utilize advanced micro-plating techniques to preserve polish longevity, offering high-grade synthetic stones that mirror authentic gold and silver finishes.</p>
+                    </div>
+                </div>
+                <div class="text-center pt-4">
+                    <button @click="currentView = 'shop'; scrollToCatalog()" class="theme-btn text-white font-bold px-8 py-3.5 rounded-xl shadow-md text-sm transition">Explore Shop Catalogues</button>
+                </div>
             </div>
         </template>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <template x-for="item in filteredProducts" :key="item.id">
-                <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition flex flex-col justify-between">
-                    <div>
-                        <div class="relative h-64 bg-slate-100 overflow-hidden group">
-                            <img :src="item.images[0]" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-xs" x-text="item.category"></span>
-                            <button @click="openZoomViewer(item)" class="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
-                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
-                                <span class="font-bold">Zoom & Pan View</span>
-                            </button>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-slate-900 text-base mb-1" x-text="item.name"></h3>
-                            <p class="text-slate-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
-                        </div>
-                    </div>
-                    <div class="p-4 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
-                        <span class="text-lg font-bold theme-text" x-text="'₹' + item.price"></span>
-                        <button @click="addToCart(item)" class="theme-btn text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs">Add to Cart</button>
+        <!-- REGULAR SHOP CATALOGUE VIEW -->
+        <template x-if="currentView === 'shop'">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- HERO BANNER -->
+                <div class="relative rounded-3xl theme-btn text-white p-6 sm:p-8 mb-8 overflow-hidden shadow-lg">
+                    <div class="relative z-10 max-w-xl">
+                        <span class="bg-white/25 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-xs">Festive Curation 2026</span>
+                        <h2 class="text-xl sm:text-2xl font-bold mt-2 mb-2 tracking-tight">Exquisite Imitation Jewelry for Indian Elegance.</h2>
+                        <p class="text-orange-50 text-xs sm:text-sm mb-4">Discover intricate bangles, necklaces, and pendants.</p>
+                        <button @click="scrollToCatalog" class="bg-white text-[rgb(231,111,69)] font-bold px-5 py-2.5 rounded-xl shadow hover:bg-orange-50 transition text-xs">Shop Catalogues</button>
                     </div>
                 </div>
-            </template>
-        </div>
+
+                <!-- CATEGORIES & SORTING -->
+                <div id="catalogue-section" class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-2 md:pb-0">
+                        <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap">All Items</button>
+                        <template x-for="cat in categories" :key="cat">
+                            <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'theme-btn text-white shadow-sm' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl text-sm font-bold transition whitespace-nowrap" x-text="cat"></button>
+                        </template>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sort By:</span>
+                        <select x-model="sortBy" class="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
+                            <option value="featured">Featured</option>
+                            <option value="low-high">Price: Low to High</option>
+                            <option value="high-low">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- EMPTY STATE -->
+                <template x-if="filteredProducts.length === 0">
+                    <div class="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-xs">
+                        <p class="text-slate-500 font-bold text-base">No catalogues available to display right now.</p>
+                        <p class="text-slate-400 text-xs mt-1">Check back soon for new arrivals!</p>
+                    </div>
+                </template>
+
+                <!-- PRODUCTS GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <template x-for="item in filteredProducts" :key="item.id">
+                        <div class="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition flex flex-col justify-between">
+                            <div>
+                                <div class="relative h-64 bg-slate-100 overflow-hidden group">
+                                    <img :src="item.images[0]" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                    <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-xs" x-text="item.category"></span>
+                                    <button @click="openZoomViewer(item)" class="absolute bottom-3 right-3 bg-slate-900/90 hover:bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur flex items-center space-x-1.5 shadow transition">
+                                        <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                                        <span class="font-bold">360° Zoom & Pan</span>
+                                    </button>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-slate-900 text-base mb-1" x-text="item.name"></h3>
+                                    <p class="text-slate-500 text-xs line-clamp-2 mb-3" x-text="item.description"></p>
+                                </div>
+                            </div>
+                            <div class="p-4 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
+                                <span class="text-lg font-bold theme-text" x-text="'₹' + item.price"></span>
+                                <button @click="addToCart(item)" class="theme-btn text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-xs">Add to Cart</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
     </main>
 
-    <!-- ZOOM VIEWER -->
+    <!-- GOOGLE-MAPS STYLE ZOOM VIEWER -->
     <div x-show="zoomModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md" x-cloak>
         <div class="absolute top-6 right-6 z-50 flex items-center space-x-3">
             <div class="bg-white/20 text-white text-xs px-3 py-1.5 rounded-xl font-bold backdrop-blur">Zoom: <span x-text="Math.round(zoomLevel * 100) + '%'"></span></div>
@@ -362,19 +394,19 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Phone Number *</label>
-                        <input type="tel" x-model="orderForm.phone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
+                        <input type="tel" x-model="orderForm.phone" placeholder="Required for delivery updates" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Email Address</label>
-                    <input type="email" x-model="orderForm.email" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
+                    <input type="email" x-model="orderForm.email" placeholder="Optional" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-[rgb(231,111,69)] focus:outline-none">
                 </div>
                 <div class="bg-orange-50/70 border border-orange-200 p-4 rounded-2xl space-y-2 mt-4">
                     <div class="flex items-start space-x-3">
                         <input type="checkbox" x-model="orderForm.attested" required class="mt-1 rounded border-orange-300 text-[rgb(231,111,69)] focus:ring-[rgb(231,111,69)]">
                         <label class="text-xs text-slate-700 leading-relaxed">
                             <span class="font-bold text-slate-900">Return & Refund Policy Attestation:</span> 
-                            I agree items must be unworn and returned within <strong class="theme-text">24 hours</strong> of delivery by dispatching back to the official address. 
+                            I agree items must be unworn/unused and returned within <strong class="theme-text">24 hours</strong> of delivery by dispatching back to the official address. For broken items, I will capture unboxing photos immediately.
                         </label>
                     </div>
                 </div>
@@ -382,6 +414,21 @@
                     <button type="submit" class="w-full theme-btn text-white font-bold py-3 rounded-xl transition text-sm shadow-md">Place Order (COD) — Total: <span x-text="'₹' + cartTotal"></span></button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- POLICY MODAL (Uniform Modal for Returns, Shipping, Privacy, FAQs) -->
+    <div x-show="policyModalOpen" class="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" @click="policyModalOpen = false"></div>
+        <div class="relative bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 z-10 shadow-2xl my-8 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+                <h3 class="text-xl font-bold text-slate-900" x-text="policyTitle"></h3>
+                <button @click="policyModalOpen = false" class="text-slate-400 font-bold text-lg">✕</button>
+            </div>
+            <div class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3 max-h-[60vh] overflow-y-auto pr-2" x-html="policyContent"></div>
+            <div class="pt-4 border-t border-slate-200 text-right">
+                <button @click="policyModalOpen = false" class="theme-btn text-white font-bold px-6 py-2.5 rounded-xl text-xs transition">Close</button>
+            </div>
         </div>
     </div>
 
@@ -395,7 +442,22 @@
             <div>
                 <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Quick Links</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><button @click="scrollToCatalog" class="hover:text-orange-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="currentView = 'shop'; scrollToCatalog()" class="hover:text-orange-400 transition">Shop Catalogues</button></li>
+                    <li><button @click="currentView = 'about'" class="hover:text-orange-400 transition">About Us</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Customer Policies</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><button @click="openPolicy('Returns & Cancellation Policy', '<strong>Returns & Cancellation:</strong><br>Items must be unworn, unused, and returned within 24 hours of delivery by dispatching back to our official address. If a broken item is received via Cash on Delivery, please take a clear picture of the item at unboxing and contact us immediately for verification and replacement.')" class="hover:text-orange-400 transition">Returns & Cancellation</button></li>
+                    <li><button @click="openPolicy('Shipping & Delivery', '<strong>Shipping & Delivery:</strong><br>We offer pan-India courier delivery. Enjoy Free Shipping across India on all orders above ₹999. Standard delivery takes 3 to 7 business days depending on the destination pincode.')" class="hover:text-orange-400 transition">Shipping & Delivery</button></li>
+                    <li><button @click="openPolicy('Privacy Policy', '<strong>Privacy Policy:</strong><br>We collect personal information solely for order fulfillment and customer support. Customers are advised to safeguard their account credentials and avoid sharing browser sessions on public or shared devices.')" class="hover:text-orange-400 transition">Privacy Policy</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Support & Help</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><button @click="openPolicy('General FAQs', '<strong>Frequently Asked Questions:</strong><br><br><strong>Q: How do I maintain imitation jewelry polish?</strong><br>A: Keep jewelry away from water, perfumes, and harsh chemicals. Store in airtight pouches after use.<br><br><strong>Q: Is Cash on Delivery available across India?</strong><br>A: Yes, COD is available across most serviceable pin codes in India.')" class="hover:text-orange-400 transition">General FAQs</button></li>
                 </ul>
             </div>
         </div>
@@ -412,6 +474,11 @@
                 enteredPassword: '',
                 newOwnerPass: '',
                 ownerTab: 'inventory',
+                currentView: 'shop', // 'shop' or 'about'
+
+                policyModalOpen: false,
+                policyTitle: '',
+                policyContent: '',
                 
                 selectedCategory: 'All',
                 sortBy: 'featured',
@@ -453,7 +520,16 @@
                 ],
 
                 scrollToCatalog() {
-                    document.getElementById('catalogue-section').scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        let el = document.getElementById('catalogue-section');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                },
+
+                openPolicy(title, content) {
+                    this.policyTitle = title;
+                    this.policyContent = content;
+                    this.policyModalOpen = true;
                 },
 
                 saveToStorage() {
@@ -626,7 +702,7 @@
                     let mailtoLink = `mailto:dlakshyaofficial@gmail.com?subject=New COD Order - ${this.orderForm.firstName} ${this.orderForm.lastName}&body=` + encodeURIComponent(orderSummary);
                     window.location.href = mailtoLink;
 
-                    alert('Order placed successfully! Preparing email notification...');
+                    alert('Order placed successfully! Preparing email notification to dlakshyaofficial@gmail.com...');
                     this.cart = [];
                     this.checkoutOpen = false;
                     this.orderForm = { firstName: '', lastName: '', address: '', pincode: '', phone: '', email: '', attested: false };
