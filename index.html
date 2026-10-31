@@ -209,7 +209,7 @@
     </div>
 
 <script>
-        // Fallback Dataset in case fetch fails
+        // Fallback Dataset matching your products.json structure
         const defaultProducts = [
             {
                 id: "1",
@@ -222,6 +222,18 @@
                 images: [
                     "https://images.unsplash.com/photo-1611591475275-555ba132b974?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80"
+                ]
+            },
+            {
+                id: "2",
+                title: "Traditional Lakshmi Kasu Necklace",
+                category: "Necklaces & Pendants",
+                price: 549,
+                tone: "Gold",
+                finish: "Temple Finish",
+                desc: "Classic temple coin necklace featuring Goddess Lakshmi motifs.",
+                images: [
                     "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80"
                 ]
             }
@@ -245,7 +257,7 @@
             cart = [];
         }
 
-        // Load products dynamically on startup
+        // Fetch products.json dynamically on startup, updating the catalog seamlessly
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const response = await fetch('products.json?v=' + new Date().getTime());
@@ -259,13 +271,12 @@
                     console.warn("Could not load products.json, using defaults.");
                 }
             } catch (error) {
-                console.error('Fetch error, falling back:', error);
+                console.error('Fetch error, falling back to defaults:', error);
             }
 
             renderProducts();
             updateCartBadge();
             
-            // Refresh cart drawer if it's open
             if (!document.getElementById('cart-drawer').classList.contains('hidden')) {
                 renderCartDrawer();
             }
@@ -411,7 +422,7 @@
             document.getElementById('product-modal').classList.add('hidden');
         }
 
-        // Cart & Checkout Logic with Robust Fallback Protection
+        // Cart & Checkout Logic with Unbreakable Fallback Rendering
         function addToCart(id) {
             const stringId = String(id);
             const existing = cart.find(item => String(item.id) === stringId);
@@ -456,7 +467,7 @@
             cart.forEach(cartItem => {
                 let p = products.find(item => String(item.id) === String(cartItem.id));
                 
-                // Bulletproof Fallback: Guarantees items render even if IDs mismatch or products.json is delayed
+                // Bulletproof Fallback: Guarantees items render even if IDs mismatch or products.json is delayed/unreachable
                 if (!p) {
                     p = {
                         id: cartItem.id,
