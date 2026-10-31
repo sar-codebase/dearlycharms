@@ -49,15 +49,9 @@
                 <a href="#catalog-section" class="inline-block bg-white text-terracotta font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition">Shop Catalogues</a>
             </section>
 
-            <!-- Navigation Tabs -->
+	<!-- Navigation Tabs (Dynamic from JSON) -->
             <div id="catalog-section" class="flex overflow-x-auto space-x-2 pb-3 mb-6 border-b border-gray-200 scrollbar-none">
-                <button onclick="filterCategory('All')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-terracotta text-white transition">All Items</button>
-                <button onclick="filterCategory('Necklaces & Pendants')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Necklaces & Pendants</button>
-                <button onclick="filterCategory('Bangles & Bracelets')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Bangles & Bracelets</button>
-                <button onclick="filterCategory('Earrings')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Earrings</button>
-                <button onclick="filterCategory('Hair Accessories')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Hair Accessories</button>
-                <button onclick="filterCategory('Rings & Nose Pins')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Rings & Nose Pins</button>
-                <button onclick="filterCategory('Jewelry Sets')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Jewelry Sets</button>
+                <!-- Dynamically generated via JavaScript -->
             </div>
 
             <!-- Sorting & Filtering Bar -->
@@ -257,8 +251,9 @@
             cart = [];
         }
 
-        // Initialize App & Fetch products.json asynchronously without blocking rendering
+     // Initialize App & Fetch products.json asynchronously without blocking rendering
         document.addEventListener('DOMContentLoaded', async () => {
+            renderCategoryTabs(); // <--- Added: Generates category tabs from initial products
             renderProducts();
             updateCartBadge();
 
@@ -269,6 +264,7 @@
                     if (Array.isArray(fetched) && fetched.length > 0) {
                         products = fetched;
                         console.log("SUCCESS! Loaded from products.json:", products);
+                        renderCategoryTabs(); // <--- Added: Re-generates tabs when fresh JSON data loads
                         renderProducts(); // Re-render grid with fetched data
                     }
                 }
@@ -280,6 +276,33 @@
                 renderCartDrawer();
             }
         });
+
+
+function renderCategoryTabs() {
+            const container = document.getElementById('catalog-section');
+            if (!container) return;
+
+            // Extract unique categories dynamically from your products array
+            const uniqueCategories = [...new Set(products.map(p => p.category))].filter(Boolean);
+
+            container.innerHTML = '';
+
+            // 'All Items' button
+            const allBtn = document.createElement('button');
+            allBtn.onclick = () => filterCategory('All');
+            allBtn.className = `cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${currentCategory === 'All' ? 'bg-terracotta text-white' : 'bg-gray-100 text-black hover:bg-gray-200'}`;
+            allBtn.textContent = "All Items";
+            container.appendChild(allBtn);
+
+            // Dynamic category buttons based on JSON products
+            uniqueCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.onclick = () => filterCategory(cat);
+                btn.className = `cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${currentCategory === cat ? 'bg-terracotta text-white' : 'bg-gray-100 text-black hover:bg-gray-200'}`;
+                btn.textContent = cat;
+                container.appendChild(btn);
+            });
+        }
 
         function renderProducts() {
             const grid = document.getElementById('product-grid');
