@@ -86,5 +86,18 @@
       "images/beautiful-shining-neckalace-set-02.jpg",
       "images/beautiful-shining-neckalace-set-03.jpg"
     ]
+  },
+  {
+    "id": "1793456295888",
+    "title": "Kuthampully ",
+    "category": "Saree",
+    "price": 759,
+    "tone": "Gold",
+    "finish": "Kuthampully-FinishTag",
+    "desc": "Kuthampully-Description",
+    "images": [
+      "images/Kuthampully01.jpg",
+      "images/Kuthampully01.jpg"
+    ]
   }
 ]
