@@ -620,7 +620,7 @@ async function loadProducts() {
 // Call the function when the page loads
 document.addEventListener('DOMContentLoaded', loadProducts);
 
-
+<script>
 (async function() {
     try {
         console.log("Attempting to fetch products.json...");
@@ -644,6 +644,6 @@ document.addEventListener('DOMContentLoaded', loadProducts);
         console.error('Fetch caught an error:', error);
     }
 })();
-
+</script>
 </body>
 </html>
