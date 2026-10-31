@@ -620,5 +620,30 @@ async function loadProducts() {
 // Call the function when the page loads
 document.addEventListener('DOMContentLoaded', loadProducts);
 
+
+(async function() {
+    try {
+        console.log("Attempting to fetch products.json...");
+        const response = await fetch('products.json?v=' + new Date().getTime());
+        
+        if (!response.ok) {
+            console.error("HTTP error! status:", response.status);
+            return;
+        }
+        
+        const products = await response.json();
+        console.log("SUCCESS! Fetched Products Data:", products);
+        
+        // Call your rendering function here (replace renderProductCatalog if your function has a different name)
+        if (typeof renderProductCatalog === 'function') {
+            renderProductCatalog(products);
+        } else {
+            console.warn("renderProductCatalog function not found, check your function name.");
+        }
+    } catch (error) {
+        console.error('Fetch caught an error:', error);
+    }
+})();
+
 </body>
 </html>
