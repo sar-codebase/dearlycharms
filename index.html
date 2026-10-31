@@ -281,9 +281,8 @@
                 imgContainer.className = "relative group bg-gray-100 aspect-square overflow-hidden cursor-pointer";
                 imgContainer.onclick = () => openMultiAngleModal(p.id);
 
-                const img = document.createElement('img');
-                img.src = p.images[0] && p.images[0].startsWith('https://') ? p.images[0] : '';
-                img.alt = p.title;
+		const img = document.createElement('img');
+		img.src = p.images[0] || '';                img.alt = p.title;
                 img.className = "w-full h-full object-cover group-hover:scale-105 transition duration-300";
 
                 const finishTag = document.createElement('span');
