@@ -601,16 +601,16 @@
         }
     </script>
 
-// Function to load products dynamically from products.json
 async function loadProducts() {
     try {
         const response = await fetch('products.json?v=' + new Date().getTime());
-        if (!response.ok) {
-            throw new Error('Failed to load products.json');
-        }
         const products = await response.json();
         
-        // Pass your 'products' array into your existing render function
+        // Let's print this in your F12 console to see if '<Temp>' is inside it!
+        console.log("Fetched Products Data:", products);
+        
+        // If your original rendering function had a different name, 
+        // replace renderProductCatalog(products) with it:
         renderProductCatalog(products);
     } catch (error) {
         console.error('Error loading catalog:', error);
