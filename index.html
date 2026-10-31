@@ -86,64 +86,11 @@
                 <!-- Products injected via JS -->
             </div>
         </div>
-
-        <!-- Owner Authentication View -->
-        <div id="owner-auth-container" class="hidden flex items-center justify-center py-20">
-            <div class="bg-white border border-gray-200 p-8 rounded-2xl max-w-md w-full shadow-lg text-center">
-                <div class="bg-terracotta text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">🔒</div>
-                <h2 class="text-xl font-bold text-terracotta mb-2">Owner Authentication Required</h2>
-                <p class="text-xs text-gray-600 mb-6">Please enter your secure owner PIN to access the management dashboard.</p>
-                <form onsubmit="verifyOwnerPin(event)" class="space-y-4">
-                    <input type="password" id="owner-pin-input" placeholder="Enter PIN (e.g. 7841)" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-center tracking-widest text-lg focus:outline-none focus:border-terracotta">
-                    <button type="submit" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Access Dashboard</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Owner Dashboard View -->
-        <div id="owner-view" class="hidden">
-            <div class="bg-amber-50 border-l-4 border-terracotta p-4 mb-6 rounded-r-xl flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-terracotta">Owner Management Dashboard</h2>
-                    <p class="text-sm text-gray-700">Add, update, or remove items and generate updated `products.json` code for GitHub.</p>
-                </div>
-                <button onclick="openProductModal()" class="bg-terracotta text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-terracotta-dark transition">+ Add New Product</button>
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm mb-8">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wider">
-                                <th class="p-3">Image</th>
-                                <th class="p-3">Title</th>
-                                <th class="p-3">Category</th>
-                                <th class="p-3">Price</th>
-                                <th class="p-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="owner-product-table" class="divide-y divide-gray-200 text-sm">
-                            <!-- Populated via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- JSON Export Box for GitHub Workflow -->
-            <div class="bg-gray-900 text-white rounded-xl p-6">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">GitHub JSON Export Utility</h3>
-                    <button onclick="copyJsonExport()" class="bg-amber-500 text-black px-3 py-1.5 rounded text-xs font-bold hover:bg-amber-400 transition">Copy JSON Code</button>
-                </div>
-                <p class="text-xs text-gray-400 mb-3">Whenever you make changes in this dashboard, copy this JSON code and update your `products.json` file in your GitHub repository so all remote visitors can see the latest updates instantly.</p>
-                <textarea id="json-export-output" readonly class="w-full h-36 bg-black text-green-400 font-mono text-xs p-3 rounded border border-gray-700 focus:outline-none"></textarea>
-            </div>
-        </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-16 text-sm">
-        <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8 text-black">
+        <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-black">
             <div>
                 <h3 class="font-bold text-base mb-3 text-terracotta">DearlyCharms</h3>
                 <p class="text-gray-600 text-xs mb-3">Exquisite imitation jewelry curated for the modern Indian aesthetic, bringing tradition and sparkle to your doorstep.</p>
@@ -163,11 +110,6 @@
                     <li><a href="#" onclick="openPolicyModal('faq')" class="hover:underline">General FAQs</a></li>
                     <li><span class="text-gray-500">Cash on Delivery & Secure Online UPI Support</span></li>
                 </ul>
-            </div>
-            <div>
-                <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Owner Access</h4>
-                <p class="text-xs text-gray-600 mb-2">Manage your catalog securely.</p>
-                <a href="?owner=true" class="inline-block bg-terracotta text-white text-xs px-3 py-1.5 rounded font-medium">Open Owner Dashboard</a>
             </div>
         </div>
         <div class="border-t border-gray-100 py-4 text-center text-xs text-gray-500">
@@ -257,69 +199,6 @@
         </div>
     </div>
 
-    <!-- Owner Add/Edit Item Modal -->
-    <div id="owner-item-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeOwnerItemModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
-            <h3 id="owner-modal-title" class="text-lg font-bold text-terracotta mb-4">Add New Product</h3>
-            <form id="owner-item-form" onsubmit="saveProduct(event)" class="space-y-3">
-                <input type="hidden" id="edit-product-id">
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Item Title *</label>
-                    <input type="text" id="item-title" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Category *</label>
-                    <select id="item-category" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                        <option value="Necklaces & Pendants">Necklaces & Pendants</option>
-                        <option value="Bangles & Bracelets">Bangles & Bracelets</option>
-                        <option value="Earrings">Earrings</option>
-                        <option value="Hair Accessories">Hair Accessories</option>
-                        <option value="Rings & Nose Pins">Rings & Nose Pins</option>
-                        <option value="Jewelry Sets">Jewelry Sets</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Price (₹) *</label>
-                        <input type="number" id="item-price" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Color Tone *</label>
-                        <select id="item-tone" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                            <option value="Gold">Gold</option>
-                            <option value="Rose Gold">Rose Gold</option>
-                            <option value="Silver">Silver</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Material Finish Tag *</label>
-                    <input type="text" id="item-finish" placeholder="e.g. Antique / Temple Finish" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Description *</label>
-                    <textarea id="item-desc" rows="2" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Primary Image URL (HTTPS required) *</label>
-                    <input type="url" id="item-img1" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Angle 2 Image URL (Optional)</label>
-                    <input type="url" id="item-img2" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Angle 3 Image URL (Optional)</label>
-                    <input type="url" id="item-img3" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
-                </div>
-                <div class="pt-3">
-                    <button type="submit" class="w-full bg-terracotta text-white py-2 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Save Product</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Policy Modal -->
     <div id="policy-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
@@ -390,52 +269,12 @@
         let currentCategory = 'All';
         let paymentMode = 'cod';
 
-        // Check if Owner view
-        const urlParams = new URLSearchParams(window.location.search);
-        const isOwner = urlParams.get('owner') === 'true';
-
         window.addEventListener('DOMContentLoaded', () => {
-            if (isOwner) {
-                document.getElementById('customer-view').classList.add('hidden');
-                // Check if owner is already authenticated in session
-                if (sessionStorage.getItem('dearly_owner_auth') === 'true') {
-                    document.getElementById('owner-view').classList.remove('hidden');
-                    renderOwnerTable();
-                    updateJsonExport();
-                } else {
-                    document.getElementById('owner-auth-container').classList.remove('hidden');
-                }
-            } else {
-                renderProducts();
-            }
+            renderProducts();
             updateCartBadge();
         });
 
-        // Owner PIN Authentication
-        function verifyOwnerPin(e) {
-            e.preventDefault();
-            const pin = document.getElementById('owner-pin-input').value;
-            // Default Owner PIN set securely; note operational security recommendation: keep PIN private or manage via private Git repo workflow.
-            if (pin === "7841") {
-                sessionStorage.setItem('dearly_owner_auth', 'true');
-                document.getElementById('owner-auth-container').classList.add('hidden');
-                document.getElementById('owner-view').classList.remove('hidden');
-                renderOwnerTable();
-                updateJsonExport();
-            } else {
-                alert("Incorrect Owner PIN. Access Denied.");
-                document.getElementById('owner-pin-input').value = "";
-            }
-        }
-
-        // Sanitization helper to prevent XSS (Mitigation A)
-        function sanitizeText(str) {
-            const temp = document.createElement('div');
-            temp.textContent = str;
-            return temp.innerHTML;
-        }
-
-        // Customer Render Function with XSS Protection via textContent/sanitization
+        // Customer Render Function
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             const sortBy = document.getElementById('sort-select').value;
@@ -686,7 +525,6 @@
                 return;
             }
 
-            // Mitigation B: Strict validation verification on phone & pincode
             const phone = document.getElementById('phone').value;
             const pincode = document.getElementById('pincode').value;
             const phoneRegex = /^[0-9]{10}$/;
@@ -712,147 +550,6 @@
             updateCartBadge();
             toggleCartModal(false);
             e.target.reset();
-        }
-
-        // Owner Dashboard Functions
-        function renderOwnerTable() {
-            const tbody = document.getElementById('owner-product-table');
-            tbody.innerHTML = '';
-            products.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50";
-
-                const tdImg = document.createElement('td');
-                tdImg.className = "p-3";
-                const img = document.createElement('img');
-                img.src = p.images[0];
-                img.className = "w-10 h-10 object-cover rounded";
-                tdImg.appendChild(img);
-
-                const tdTitle = document.createElement('td');
-                tdTitle.className = "p-3 font-medium";
-                tdTitle.textContent = p.title;
-
-                const tdCat = document.createElement('td');
-                tdCat.className = "p-3 text-gray-600";
-                tdCat.textContent = p.category;
-
-                const tdPrice = document.createElement('td');
-                tdPrice.className = "p-3 font-bold text-terracotta";
-                tdPrice.textContent = `₹${p.price}`;
-
-                const tdActions = document.createElement('td');
-                tdActions.className = "p-3 space-x-2";
-
-                const editBtn = document.createElement('button');
-                editBtn.className = "text-blue-600 hover:underline text-xs font-bold";
-                editBtn.textContent = "Edit";
-                editBtn.onclick = () => editProduct(p.id);
-
-                const delBtn = document.createElement('button');
-                delBtn.className = "text-red-600 hover:underline text-xs font-bold";
-                delBtn.textContent = "Delete";
-                delBtn.onclick = () => deleteProduct(p.id);
-
-                tdActions.appendChild(editBtn);
-                tdActions.appendChild(delBtn);
-
-                tr.appendChild(tdImg);
-                tr.appendChild(tdTitle);
-                tr.appendChild(tdCat);
-                tr.appendChild(tdPrice);
-                tr.appendChild(tdActions);
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openProductModal() {
-            document.getElementById('owner-modal-title').innerText = "Add New Product";
-            document.getElementById('owner-item-form').reset();
-            document.getElementById('edit-product-id').value = "";
-            document.getElementById('owner-item-modal').classList.remove('hidden');
-        }
-
-        function closeOwnerItemModal() {
-            document.getElementById('owner-item-modal').classList.add('hidden');
-        }
-
-        function editProduct(id) {
-            const p = products.find(item => item.id === id);
-            if (!p) return;
-
-            document.getElementById('owner-modal-title').innerText = "Edit Product";
-            document.getElementById('edit-product-id').value = p.id;
-            document.getElementById('item-title').value = p.title;
-            document.getElementById('item-category').value = p.category;
-            document.getElementById('item-price').value = p.price;
-            document.getElementById('item-tone').value = p.tone;
-            document.getElementById('item-finish').value = p.finish;
-            document.getElementById('item-desc').value = p.desc;
-            document.getElementById('item-img1').value = p.images[0] || '';
-            document.getElementById('item-img2').value = p.images[1] || '';
-            document.getElementById('item-img3').value = p.images[2] || '';
-
-            document.getElementById('owner-item-modal').classList.remove('hidden');
-        }
-
-        function saveProduct(e) {
-            e.preventDefault();
-            
-            // Mitigation C: Enforce HTTPS for image URLs to prevent Mixed Content errors
-            const img1 = document.getElementById('item-img1').value;
-            const img2 = document.getElementById('item-img2').value;
-            const img3 = document.getElementById('item-img3').value;
-
-            if ((img1 && !img1.startsWith('https://')) || (img2 && !img2.startsWith('https://')) || (img3 && !img3.startsWith('https://'))) {
-                alert("Security Warning: All image URLs must use secure HTTPS protocols to prevent mixed-content blocking.");
-                return;
-            }
-
-            const editId = document.getElementById('edit-product-id').value;
-            const title = document.getElementById('item-title').value;
-            const category = document.getElementById('item-category').value;
-            const price = Number(document.getElementById('item-price').value);
-            const tone = document.getElementById('item-tone').value;
-            const finish = document.getElementById('item-finish').value;
-            const desc = document.getElementById('item-desc').value;
-            
-            const imgs = [img1, img2, img3].filter(Boolean);
-
-            if (editId) {
-                products = products.map(p => p.id === editId ? { ...p, title, category, price, tone, finish, desc, images: imgs } : p);
-            } else {
-                const newProduct = {
-                    id: Date.now().toString(),
-                    title, category, price, tone, finish, desc, images: imgs
-                };
-                products.push(newProduct);
-            }
-
-            localStorage.setItem('dearly_products', JSON.stringify(products));
-            closeOwnerItemModal();
-            renderOwnerTable();
-            updateJsonExport();
-        }
-
-        function deleteProduct(id) {
-            if (confirm("Are you sure you want to delete this product?")) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('dearly_products', JSON.stringify(products));
-                renderOwnerTable();
-                updateJsonExport();
-            }
-        }
-
-        function updateJsonExport() {
-            document.getElementById('json-export-output').value = JSON.stringify(products, null, 2);
-        }
-
-        function copyJsonExport() {
-            const textarea = document.getElementById('json-export-output');
-            textarea.select();
-            navigator.clipboard.writeText(textarea.value);
-            alert("JSON code copied to clipboard! You can now paste this into your GitHub repository's `products.json` file.");
         }
 
         // Policy & About Us Modals
