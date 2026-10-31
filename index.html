@@ -228,7 +228,20 @@
         ];
 
         let products = [];
-        let cart = JSON.parse(localStorage.getItem('dearly_cart')) || [];
+        
+let cart = [];
+try {
+    const savedCart = JSON.parse(localStorage.getItem('dearly_cart'));
+    if (Array.isArray(savedCart)) {
+        // Filter out any malformed items from previous versions
+        cart = savedCart.filter(item => item && item.id && item.title && typeof item.price === 'number');
+    }
+} catch (e) {
+    console.warn("Resetting corrupted cart storage:", e);
+    localStorage.removeItem('dearly_cart');
+    cart = [];
+}
+
         let currentCategory = 'All';
         let paymentMode = 'cod';
 
@@ -392,23 +405,22 @@
         }
 
         // Cart & Checkout Logic
-        function addToCart(id) {
-            const p = products.find(item => item.id === id);
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ ...p, qty: 1 });
-            }
-            localStorage.setItem('dearly_cart', JSON.stringify(cart));
-            updateCartBadge();
-            toggleCartModal(true);
-        }
+   function addToCart(id) {
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({ id: id, qty: 1 });
+    }
+    localStorage.setItem('dearly_cart', JSON.stringify(cart));
+    updateCartBadge();
+    toggleCartModal(true);
+}
 
-        function updateCartBadge() {
-            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cart-badge').innerText = totalQty;
-        }
+    function updateCartBadge() {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cart-badge').innerText = totalQty;
+}
 
         function toggleCartModal(open) {
             const drawer = document.getElementById('cart-drawer');
@@ -420,55 +432,61 @@
             }
         }
 
-        function renderCartDrawer() {
-            const container = document.getElementById('cart-items-container');
-            const totalEl = document.getElementById('cart-total');
+        
+function renderCartDrawer() {
+    const container = document.getElementById('cart-items-container');
+    const totalEl = document.getElementById('cart-total');
 
-            if (cart.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-500 py-8 text-sm">Your cart is currently empty.</p>`;
-                totalEl.innerText = "₹0";
-                return;
-            }
+    if (!cart || cart.length === 0) {
+        container.innerHTML = `<p class="text-center text-gray-500 py-8 text-sm">Your cart is currently empty.</p>`;
+        totalEl.innerText = "₹0";
+        return;
+    }
 
-            let total = 0;
-            container.innerHTML = '';
-            cart.forEach(item => {
-                total += item.price * item.qty;
-                const row = document.createElement('div');
-                row.className = "flex items-center justify-between border-b pb-3";
+    let total = 0;
+    container.innerHTML = '';
+    
+    cart.forEach(cartItem => {
+        // Find the live product from our loaded products array using the ID
+        const p = products.find(item => item.id === cartItem.id);
+        if (!p) return; // Skip if a product was deleted from the catalog
 
-                const leftDiv = document.createElement('div');
-                leftDiv.className = "flex items-center space-x-3";
+        total += p.price * cartItem.qty;
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between border-b pb-3";
 
-                const img = document.createElement('img');
-                img.src = item.images[0];
-                img.className = "w-12 h-12 object-cover rounded-lg";
+        const leftDiv = document.createElement('div');
+        leftDiv.className = "flex items-center space-x-3";
 
-                const textDiv = document.createElement('div');
-                const h4 = document.createElement('h4');
-                h4.className = "font-bold text-xs text-black";
-                h4.textContent = item.title;
+        const img = document.createElement('img');
+        img.src = (p.images && p.images[0]) ? p.images[0] : '';
+        img.className = "w-12 h-12 object-cover rounded-lg";
 
-                const pTag = document.createElement('p');
-                pTag.className = "text-xs text-gray-500";
-                pTag.textContent = `₹${item.price} x ${item.qty}`;
+        const textDiv = document.createElement('div');
+        const h4 = document.createElement('h4');
+        h4.className = "font-bold text-xs text-black";
+        h4.textContent = p.title;
 
-                textDiv.appendChild(h4);
-                textDiv.appendChild(pTag);
-                leftDiv.appendChild(img);
-                leftDiv.appendChild(textDiv);
+        const pTag = document.createElement('p');
+        pTag.className = "text-xs text-gray-500";
+        pTag.textContent = `₹${p.price} x ${cartItem.qty}`;
 
-                const removeBtn = document.createElement('button');
-                removeBtn.className = "text-red-500 hover:text-red-700 text-xs font-bold";
-                removeBtn.textContent = "× Remove";
-                removeBtn.onclick = () => removeFromCart(item.id);
+        textDiv.appendChild(h4);
+        textDiv.appendChild(pTag);
+        leftDiv.appendChild(img);
+        leftDiv.appendChild(textDiv);
 
-                row.appendChild(leftDiv);
-                row.appendChild(removeBtn);
-                container.appendChild(row);
-            });
-            totalEl.innerText = `₹${total}`;
-        }
+        const removeBtn = document.createElement('button');
+        removeBtn.className = "text-red-500 hover:text-red-700 text-xs font-bold";
+        removeBtn.textContent = "× Remove";
+        removeBtn.onclick = () => removeFromCart(cartItem.id);
+
+        row.appendChild(leftDiv);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+    });
+    totalEl.innerText = `₹${total}`;
+}
 
         function removeFromCart(id) {
             cart = cart.filter(item => item.id !== id);
