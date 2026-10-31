@@ -600,5 +600,25 @@
             document.getElementById('policy-modal').classList.add('hidden');
         }
     </script>
+
+// Function to load products dynamically from products.json
+async function loadProducts() {
+    try {
+        const response = await fetch('products.json');
+        if (!response.ok) {
+            throw new Error('Failed to load products.json');
+        }
+        const products = await response.json();
+        
+        // Pass your 'products' array into your existing render function
+        renderProductCatalog(products);
+    } catch (error) {
+        console.error('Error loading catalog:', error);
+    }
+}
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', loadProducts);
+
 </body>
 </html>
