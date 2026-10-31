@@ -604,7 +604,7 @@
 // Function to load products dynamically from products.json
 async function loadProducts() {
     try {
-        const response = await fetch('products.json');
+        const response = await fetch('products.json?v=' + new Date().getTime());
         if (!response.ok) {
             throw new Error('Failed to load products.json');
         }
