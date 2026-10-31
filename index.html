@@ -380,8 +380,7 @@
             renderProducts();
         }
 
-        // 360 Multi-Angle Modal
-        function openMultiAngleModal(id) {
+  function openMultiAngleModal(id) {
             const p = products.find(item => String(item.id) === String(id));
             if (!p) return;
 
@@ -390,23 +389,23 @@
 
             content.innerHTML = `
                 <div class="flex flex-col space-y-3">
-                    <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden border">
-                        <img id="main-angle-img" src="${p.images[0]}" class="w-full h-full object-cover">
+                    <div class="w-full h-72 bg-gray-50 rounded-xl overflow-hidden border flex items-center justify-center relative">
+                        <img id="main-angle-img" src="${p.images && p.images[0] ? p.images[0] : ''}" class="max-h-full max-w-full object-contain p-2">
                     </div>
                     <div class="flex space-x-2 overflow-x-auto pb-1">
-                        ${p.images.map((img) => `
-                            <img src="${img}" onclick="document.getElementById('main-angle-img').src='${img}'" class="w-16 h-16 object-cover rounded-lg border-2 border-transparent hover:border-terracotta cursor-pointer">
-                        `).join('')}
+                        ${p.images && p.images.length > 0 ? p.images.map((img) => `
+                            <img src="${img}" onclick="document.getElementById('main-angle-img').src='${img}'" class="w-14 h-14 object-cover rounded-lg border-2 border-transparent hover:border-terracotta cursor-pointer flex-shrink-0">
+                        `).join('') : ''}
                     </div>
                 </div>
-                <div class="flex flex-col justify-between">
+                <div class="flex flex-col justify-between py-2">
                     <div>
                         <span id="modal-finish" class="text-xs bg-terracotta text-white px-2.5 py-0.5 rounded font-bold"></span>
                         <h2 id="modal-title" class="text-xl font-bold text-black mt-2 mb-2"></h2>
-                        <p id="modal-desc" class="text-sm text-gray-600 mb-4"></p>
+                        <p id="modal-desc" class="text-sm text-gray-600 mb-4 leading-relaxed"></p>
                         <div id="modal-price" class="text-2xl font-bold text-terracotta mb-4"></div>
                     </div>
-                    <button onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Add to Cart & Checkout</button>
+                    <button onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition shadow">Add to Cart & Checkout</button>
                 </div>
             `;
             document.getElementById('modal-finish').textContent = p.finish || 'Jewelry';
@@ -416,7 +415,6 @@
 
             modal.classList.remove('hidden');
         }
-
         function closeProductModal() {
             document.getElementById('product-modal').classList.add('hidden');
         }
