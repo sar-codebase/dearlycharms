@@ -61,5 +61,31 @@
     "images": [
       "images/3-layer-elegant-necklace-earring-set.jpg"
     ]
+  },
+  {
+    "id": "1793437143960",
+    "title": "Nagapadam Set",
+    "category": "Necklaces & Pendants",
+    "price": 599,
+    "tone": "Gold",
+    "finish": "Nagapadam Set-MaterialFinishTag",
+    "desc": "Nagapadam Set-Description",
+    "images": [
+      "images/Nagapdam-set.jpg"
+    ]
+  },
+  {
+    "id": "1793437216396",
+    "title": "Beautiful Shining necklace Set",
+    "category": "Necklaces & Pendants",
+    "price": 599,
+    "tone": "Gold",
+    "finish": "Beautiful Shining necklace Set-FinishTagTobeUpdate",
+    "desc": "Beautiful Shining necklace Set-Description-TobeUpdated",
+    "images": [
+      "images/beautiful-shining-neckalace-set-01.jpg",
+      "images/beautiful-shining-neckalace-set-02.jpg",
+      "images/beautiful-shining-neckalace-set-03.jpg"
+    ]
   }
 ]
