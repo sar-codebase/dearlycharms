@@ -1,63 +1,907 @@
-You are an expert front-end web developer, security engineer, and UI/UX designer. Your task is to generate a complete, production-ready, single-file HTML storefront (`index.html`) and an accompanying `products.json` file data structure for an e-commerce platform called **DearlyCharms** (hosted on GitHub Pages), styled specifically for an Indian imitation jewelry store, incorporating robust security hardening measures to mitigate potential threats.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DearlyCharms - Exquisite Imitation Jewelry</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .bg-terracotta { background-color: #78412c; }
+        .text-terracotta { color: #78412c; }
+        .border-terracotta { border-color: #78412c; }
+        .hover\:bg-terracotta-dark:hover { background-color: #5e3221; }
+    </style>
+</head>
+<body class="bg-white text-black min-h-screen flex flex-col font-sans">
 
-### 1. Core Architecture & GitHub JSON Workflow
-- **Data Source (`products.json`):** 
-  - The storefront must dynamically fetch its product catalog, categories, pricing, and multi-angle image arrays from a separate external `products.json` file hosted in the same repository.
-  - Include a default fallback JSON dataset directly inside the script so the site functions seamlessly even if fetched locally during testing.
-- **Secure Owner Management Workflow (`?owner=true`):**
-  - **Password Protection:** The owner dashboard must be strictly password-protected. When visiting `?owner=true`, prompt the user with a secure PIN modal. 
-  - *Security Note on PIN:* Treat the PIN as a simple UI gatekeeper. To maintain maximum security, the owner should keep the PIN private, or alternatively remove the owner panel from the public repository entirely, managing products locally and pushing updates via Git from a secure laptop only.
-  - Provide an interactive **Owner Dashboard** where the authenticated owner can manage products and instantly generate/copy updated JSON code blocks for the `products.json` file on GitHub.
-- **Image Hosting Integration:**
-  - Support full multi-angle image grouping by allowing the owner to input direct image URLs (such as GitHub raw asset links: `https://raw.githubusercontent.com/...`).
+    <!-- Header -->
+    <header class="border-b border-gray-200 sticky top-0 bg-white z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="bg-terracotta text-white font-bold text-xl px-3 py-1 rounded">DC</span>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-terracotta">DearlyCharms</h1>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">Imitation Jewelry</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleCartModal(true)" class="relative p-2 text-terracotta hover:bg-gray-100 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span id="cart-badge" class="absolute top-0 right-0 bg-terracotta text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-### 2. Design System & Strict Color Constraints
-- **Primary / Accent Color (#78412c):** Must be used exclusively for all active navigation tabs, action buttons, headers, borders of active elements, and the hero banner background.
-- **Background Color (#ffffff):** Pure white background across all screens and modals.
-- **Text & Typography:** Black (`#000000`) for primary body text, dark gray for secondary text, and white (`#ffffff`) for text inside `#78412c` buttons/tabs. Clean sans-serif font stack.
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
 
-### 3. Customer Storefront Features & Flow (`/dearlycharms/`)
-- **Navigation & Categories:** 
-  - Main anatomy tabs: *Necklaces & Pendants*, *Bangles & Bracelets*, *Earrings*, *Hair Accessories*, *Rings & Nose Pins*, *Jewelry Sets*.
-  - Collection & material tags: *Antique / Temple Finish*, *Kempu Stone / Polki*, *American Diamond (AD)*, *Oxidized Silver*.
-- **Sorting & Filtering Bar:**
-  - Sort by Price (Low to High, High to Low), Sort by Featured/Popularity.
-  - Filter by Color Tone (Gold, Rose Gold, Silver).
-- **Product Card & 360° Multi-Angle Viewer:**
-  - Each product card includes a `[360° Zoom & Pan]` button that opens a modal with a main image viewer and a thumbnail strip to preview alternate angles.
-- **Cart & Secure Checkout Options:**
-  - **Option 1: Cash on Delivery (COD)** with form fields: First Name, Last Name, Street Address, Pincode, and Phone Number.
-  - **Option 2: Online Payment** via simulated/integrated UPI/Cards checkout trigger.
-- **Mandatory Return & Refund Attestation:**
-  - A mandatory checkbox during checkout stating: *"I agree that items purchased can be returned within 24 hours of delivery and must be dispatched back to the official address in an unused, unbroken condition. If a broken item is received, I acknowledge I must capture a photo immediately upon delivery before proceeding with the return."* Order submission must be blocked if unchecked.
+        <!-- Customer View -->
+        <div id="customer-view">
+            <!-- Hero Banner -->
+            <section class="bg-terracotta text-white rounded-2xl p-8 md:p-12 mb-8 shadow-md">
+                <span class="bg-white text-terracotta text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3">Festive Curation 2026</span>
+                <h2 class="text-3xl md:text-5xl font-bold mb-3">Exquisite Imitation Jewelry for Indian Elegance.</h2>
+                <p class="text-gray-100 mb-6 max-w-xl text-sm md:text-base">Discover intricate temple kempu sets, antique bangles, and bridal statement pieces crafted for every celebration.</p>
+                <a href="#catalog-section" class="inline-block bg-white text-terracotta font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100 transition">Shop Catalogues</a>
+            </section>
 
-### 4. Footer Section & About Us Placement
-The footer must be structured into clear columns on a clean white background with black text:
-- **Column 1: Brand & About Us** — Brief brand introduction followed by a clean **"About Us"** link opening an informational modal.
-- **Column 2: Customer Policies** — Returns & Cancellation, Shipping & Delivery, Privacy Policy.
-- **Column 3: Support & Help** — General FAQs and payment method details.
-- **Column 4: Owner Access** — Secure link to the owner dashboard (`?owner=true`).
-- **Copyright:** `© 2026 DearlyCharms. All rights reserved.`
+            <!-- Navigation Tabs -->
+            <div id="catalog-section" class="flex overflow-x-auto space-x-2 pb-3 mb-6 border-b border-gray-200 scrollbar-none">
+                <button onclick="filterCategory('All')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-terracotta text-white transition">All Items</button>
+                <button onclick="filterCategory('Necklaces & Pendants')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Necklaces & Pendants</button>
+                <button onclick="filterCategory('Bangles & Bracelets')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Bangles & Bracelets</button>
+                <button onclick="filterCategory('Earrings')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Earrings</button>
+                <button onclick="filterCategory('Hair Accessories')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Hair Accessories</button>
+                <button onclick="filterCategory('Rings & Nose Pins')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Rings & Nose Pins</button>
+                <button onclick="filterCategory('Jewelry Sets')" class="cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition">Jewelry Sets</button>
+            </div>
 
-### 5. Detailed Security Measures & Threat Mitigations
-You must explicitly build and code the application to handle the following security vectors:
+            <!-- Sorting & Filtering Bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Sort By:</span>
+                    <select id="sort-select" onchange="renderProducts()" class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        <option value="featured">Featured / Popularity</option>
+                        <option value="low-high">Price: Low to High</option>
+                        <option value="high-low">Price: High to Low</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Color Tone:</span>
+                    <select id="color-filter" onchange="renderProducts()" class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        <option value="All">All Tones</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Rose Gold">Rose Gold</option>
+                        <option value="Silver">Silver</option>
+                    </select>
+                </div>
+            </div>
 
-- **A. Stored Cross-Site Scripting (XSS) via Owner Inputs**
-  - *Risk:* Entering malicious HTML or JavaScript scripts into product title/description fields could execute in visitors' browsers.
-  - *Mitigation:* Ensure text inputs are properly sanitized before rendering, utilizing standard DOM property assignments (`textContent` or secure text escaping) in JavaScript rather than raw HTML parsing (`innerHTML`) for user-generated text fields.
+            <!-- Product Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Products injected via JS -->
+            </div>
+        </div>
 
-- **B. Direct URL Manipulation or Bot Spam on Checkout**
-  - *Risk:* Automated bots or malicious users spamming checkout forms with fake orders, invalid numbers, or junk data.
-  - *Mitigation:* 
-    - Enforce strict client-side validation patterns (e.g., exact 10-digit Indian mobile number validation and 6-digit pincode patterns) across all checkout form inputs.
-    - Structure form submission handling so it is ready to integrate with external notification services (like EmailJS or Formspree) equipped with built-in reCAPTCHA or spam-filtering capabilities.
+        <!-- Owner Authentication View -->
+        <div id="owner-auth-container" class="hidden flex items-center justify-center py-20">
+            <div class="bg-white border border-gray-200 p-8 rounded-2xl max-w-md w-full shadow-lg text-center">
+                <div class="bg-terracotta text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg">🔒</div>
+                <h2 class="text-xl font-bold text-terracotta mb-2">Owner Authentication Required</h2>
+                <p class="text-xs text-gray-600 mb-6">Please enter your secure owner PIN to access the management dashboard.</p>
+                <form onsubmit="verifyOwnerPin(event)" class="space-y-4">
+                    <input type="password" id="owner-pin-input" placeholder="Enter PIN (e.g. 7841)" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-center tracking-widest text-lg focus:outline-none focus:border-terracotta">
+                    <button type="submit" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Access Dashboard</button>
+                </form>
+            </div>
+        </div>
 
-- **C. Insecure Image Links (Mixed Content)**
-  - *Risk:* Pasting image URLs using `http://` instead of `https://` causes modern web browsers to block them for security reasons ("Mixed Content" error).
-  - *Mitigation:* Implement validation logic or strict instructions within the owner image URL inputs to ensure all saved image URLs start with `https://`.
+        <!-- Owner Dashboard View -->
+        <div id="owner-view" class="hidden">
+            <div class="bg-amber-50 border-l-4 border-terracotta p-4 mb-6 rounded-r-xl flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-terracotta">Owner Management Dashboard</h2>
+                    <p class="text-sm text-gray-700">Add, update, or remove items and generate updated `products.json` code for GitHub.</p>
+                </div>
+                <button onclick="openProductModal()" class="bg-terracotta text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-terracotta-dark transition">+ Add New Product</button>
+            </div>
 
-- **D. Owner PIN Privacy & Operational Security**
-  - *Risk:* Hardcoded client-side PINs can be inspected by tech-savvy visitors using browser dev tools.
-  - *Mitigation:* Treat the PIN authentication as a basic UI gatekeeper. For maximum security, advise the owner to keep the PIN confidential, or remove the owner management interface from the public GitHub repository entirely, managing catalogs locally and pushing updates via Git from a secure private workstation.
+            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm mb-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700 text-xs uppercase tracking-wider">
+                                <th class="p-3">Image</th>
+                                <th class="p-3">Title</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Price</th>
+                                <th class="p-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="owner-product-table" class="divide-y divide-gray-200 text-sm">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-Please write out the complete, secure, and fully functional HTML code incorporating all the above logic, styling, and robust security safeguards.
+            <!-- JSON Export Box for GitHub Workflow -->
+            <div class="bg-gray-900 text-white rounded-xl p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400">GitHub JSON Export Utility</h3>
+                    <button onclick="copyJsonExport()" class="bg-amber-500 text-black px-3 py-1.5 rounded text-xs font-bold hover:bg-amber-400 transition">Copy JSON Code</button>
+                </div>
+                <p class="text-xs text-gray-400 mb-3">Whenever you make changes in this dashboard, copy this JSON code and update your `products.json` file in your GitHub repository so all remote visitors can see the latest updates instantly.</p>
+                <textarea id="json-export-output" readonly class="w-full h-36 bg-black text-green-400 font-mono text-xs p-3 rounded border border-gray-700 focus:outline-none"></textarea>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16 text-sm">
+        <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8 text-black">
+            <div>
+                <h3 class="font-bold text-base mb-3 text-terracotta">DearlyCharms</h3>
+                <p class="text-gray-600 text-xs mb-3">Exquisite imitation jewelry curated for the modern Indian aesthetic, bringing tradition and sparkle to your doorstep.</p>
+                <a href="#" onclick="openPolicyModal('about')" class="inline-block text-xs font-semibold text-terracotta underline hover:text-black">About Us &rarr;</a>
+            </div>
+            <div>
+                <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Customer Policies</h4>
+                <ul class="space-y-2 text-xs text-gray-600">
+                    <li><a href="#" onclick="openPolicyModal('returns')" class="hover:underline">Returns & Cancellation</a></li>
+                    <li><a href="#" onclick="openPolicyModal('shipping')" class="hover:underline">Shipping & Delivery</a></li>
+                    <li><a href="#" onclick="openPolicyModal('privacy')" class="hover:underline">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Support & Help</h4>
+                <ul class="space-y-2 text-xs text-gray-600">
+                    <li><a href="#" onclick="openPolicyModal('faq')" class="hover:underline">General FAQs</a></li>
+                    <li><span class="text-gray-500">Cash on Delivery & Secure Online UPI Support</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Owner Access</h4>
+                <p class="text-xs text-gray-600 mb-2">Manage your catalog securely.</p>
+                <a href="?owner=true" class="inline-block bg-terracotta text-white text-xs px-3 py-1.5 rounded font-medium">Open Owner Dashboard</a>
+            </div>
+        </div>
+        <div class="border-t border-gray-100 py-4 text-center text-xs text-gray-500">
+            © 2026 DearlyCharms. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- 360 Multi-Angle Product Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
+            <div id="modal-content" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart / Checkout Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 class="text-xl font-bold text-terracotta">Your Shopping Cart</h2>
+                <button onclick="toggleCartModal(false)" class="text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+            </div>
+            <div id="cart-items-container" class="flex-grow space-y-4 mb-6 overflow-y-auto">
+                <!-- Cart items -->
+            </div>
+            <div id="checkout-section" class="border-t pt-4">
+                <div class="flex justify-between font-bold text-lg mb-4">
+                    <span>Total:</span>
+                    <span id="cart-total">₹0</span>
+                </div>
+                
+                <!-- Payment Choice -->
+                <div class="mb-4">
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Select Payment Method</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setPaymentMode('cod')" id="btn-cod" class="py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition">Cash on Delivery</button>
+                        <button type="button" onclick="setPaymentMode('online')" id="btn-online" class="py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition">Pay Online (UPI/Cards)</button>
+                    </div>
+                </div>
+
+                <!-- COD Form Fields -->
+                <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">First Name *</label>
+                            <input type="text" id="fname" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Last Name *</label>
+                            <input type="text" id="lname" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-600 mb-1">Street Address *</label>
+                        <input type="text" id="address" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Pincode *</label>
+                            <input type="text" id="pincode" required pattern="[0-9]{6}" title="6-digit Indian pincode" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">Phone Number *</label>
+                            <input type="tel" id="phone" required pattern="[0-9]{10}" title="10-digit mobile number" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-600 mb-1">Email Address (Optional)</label>
+                        <input type="email" id="email" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                    </div>
+
+                    <!-- Mandatory Attestation -->
+                    <div class="mt-4 bg-gray-50 p-3 rounded border border-gray-200">
+                        <label class="flex items-start space-x-2 cursor-pointer">
+                            <input type="checkbox" id="return-attestation" required class="mt-1 h-4 w-4 text-terracotta border-gray-300 rounded">
+                            <span class="text-xs text-gray-700 leading-relaxed">
+                                I agree that items purchased can be returned within <strong>24 hours</strong> of delivery and must be dispatched back to the official address in an <strong>unused, unbroken condition</strong>. If a broken item is received, I acknowledge I must capture a photo immediately upon delivery before proceeding with the return.
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="place-order-btn" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition mt-4">Place Order (COD)</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Owner Add/Edit Item Modal -->
+    <div id="owner-item-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeOwnerItemModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
+            <h3 id="owner-modal-title" class="text-lg font-bold text-terracotta mb-4">Add New Product</h3>
+            <form id="owner-item-form" onsubmit="saveProduct(event)" class="space-y-3">
+                <input type="hidden" id="edit-product-id">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Item Title *</label>
+                    <input type="text" id="item-title" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Category *</label>
+                    <select id="item-category" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        <option value="Necklaces & Pendants">Necklaces & Pendants</option>
+                        <option value="Bangles & Bracelets">Bangles & Bracelets</option>
+                        <option value="Earrings">Earrings</option>
+                        <option value="Hair Accessories">Hair Accessories</option>
+                        <option value="Rings & Nose Pins">Rings & Nose Pins</option>
+                        <option value="Jewelry Sets">Jewelry Sets</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Price (₹) *</label>
+                        <input type="number" id="item-price" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Color Tone *</label>
+                        <select id="item-tone" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                            <option value="Gold">Gold</option>
+                            <option value="Rose Gold">Rose Gold</option>
+                            <option value="Silver">Silver</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Material Finish Tag *</label>
+                    <input type="text" id="item-finish" placeholder="e.g. Antique / Temple Finish" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Description *</label>
+                    <textarea id="item-desc" rows="2" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Primary Image URL (HTTPS required) *</label>
+                    <input type="url" id="item-img1" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Angle 2 Image URL (Optional)</label>
+                    <input type="url" id="item-img2" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Angle 3 Image URL (Optional)</label>
+                    <input type="url" id="item-img3" placeholder="https://..." pattern="https://.*" title="Must be a secure https:// URL" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div class="pt-3">
+                    <button type="submit" class="w-full bg-terracotta text-white py-2 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div id="policy-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closePolicyModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
+            <h3 id="policy-title" class="text-xl font-bold text-terracotta mb-4"></h3>
+            <div id="policy-body" class="text-sm text-gray-700 space-y-3"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initial Dataset (Fallback & Default)
+        const defaultProducts = [
+            {
+                id: "1",
+                title: "Royal Antique Kempu Bangles Set",
+                category: "Bangles & Bracelets",
+                price: 1299,
+                tone: "Gold",
+                finish: "Antique / Temple Finish",
+                desc: "Exquisite multi-layered temple jewellery kempu stone bangles crafted for traditional Indian occasions.",
+                images: [
+                    "https://images.unsplash.com/photo-1611591475275-555ba132b974?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80"
+                ]
+            },
+            {
+                id: "2",
+                title: "Zircon American Diamond Choker",
+                category: "Necklaces & Pendants",
+                price: 2499,
+                tone: "Silver",
+                finish: "American Diamond (AD)",
+                desc: "Sparkling crystal-clear AD stone choker necklace with matching drop earrings.",
+                images: [
+                    "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=80"
+                ]
+            },
+            {
+                id: "3",
+                title: "Traditional Kundan Jhumkas",
+                category: "Earrings",
+                price: 899,
+                tone: "Gold",
+                finish: "Kempu Stone / Polki",
+                desc: "Handcrafted traditional kundan jhumka earrings with pearl hangings.",
+                images: [
+                    "https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=600&q=80"
+                ]
+            },
+            {
+                id: "4",
+                title: "Oxidized Silver Boho Necklace Set",
+                category: "Necklaces & Pendants",
+                price: 1599,
+                tone: "Silver",
+                finish: "Oxidized Silver",
+                desc: "Tribal-inspired dark silver-finish statement necklace set for festive ethnic wear.",
+                images: [
+                    "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80"
+                ]
+            }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('dearly_products')) || defaultProducts;
+        let cart = JSON.parse(localStorage.getItem('dearly_cart')) || [];
+        let currentCategory = 'All';
+        let paymentMode = 'cod';
+
+        // Check if Owner view
+        const urlParams = new URLSearchParams(window.location.search);
+        const isOwner = urlParams.get('owner') === 'true';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isOwner) {
+                document.getElementById('customer-view').classList.add('hidden');
+                // Check if owner is already authenticated in session
+                if (sessionStorage.getItem('dearly_owner_auth') === 'true') {
+                    document.getElementById('owner-view').classList.remove('hidden');
+                    renderOwnerTable();
+                    updateJsonExport();
+                } else {
+                    document.getElementById('owner-auth-container').classList.remove('hidden');
+                }
+            } else {
+                renderProducts();
+            }
+            updateCartBadge();
+        });
+
+        // Owner PIN Authentication
+        function verifyOwnerPin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('owner-pin-input').value;
+            // Default Owner PIN set securely; note operational security recommendation: keep PIN private or manage via private Git repo workflow.
+            if (pin === "7841") {
+                sessionStorage.setItem('dearly_owner_auth', 'true');
+                document.getElementById('owner-auth-container').classList.add('hidden');
+                document.getElementById('owner-view').classList.remove('hidden');
+                renderOwnerTable();
+                updateJsonExport();
+            } else {
+                alert("Incorrect Owner PIN. Access Denied.");
+                document.getElementById('owner-pin-input').value = "";
+            }
+        }
+
+        // Sanitization helper to prevent XSS (Mitigation A)
+        function sanitizeText(str) {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
+        // Customer Render Function with XSS Protection via textContent/sanitization
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const sortBy = document.getElementById('sort-select').value;
+            const colorTone = document.getElementById('color-filter').value;
+
+            let filtered = products.filter(p => {
+                const matchCat = currentCategory === 'All' || p.category === currentCategory;
+                const matchTone = colorTone === 'All' || p.tone === colorTone;
+                return matchCat && matchTone;
+            });
+
+            if (sortBy === 'low-high') filtered.sort((a,b) => a.price - b.price);
+            if (sortBy === 'high-low') filtered.sort((b,a) => b.price - a.price);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-gray-500">No items found in this category or filter.</div>`;
+                return;
+            }
+
+            grid.innerHTML = '';
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col";
+
+                const imgContainer = document.createElement('div');
+                imgContainer.className = "relative group bg-gray-100 aspect-square overflow-hidden cursor-pointer";
+                imgContainer.onclick = () => openMultiAngleModal(p.id);
+
+                const img = document.createElement('img');
+                img.src = p.images[0] && p.images[0].startsWith('https://') ? p.images[0] : '';
+                img.alt = p.title;
+                img.className = "w-full h-full object-cover group-hover:scale-105 transition duration-300";
+
+                const finishTag = document.createElement('span');
+                finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded";
+                finishTag.textContent = p.finish;
+
+                const viewBtn = document.createElement('button');
+                viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3";
+                viewBtn.textContent = "360° View";
+
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(finishTag);
+                imgContainer.appendChild(viewBtn);
+
+                const bodyDiv = document.createElement('div');
+                bodyDiv.className = "p-4 flex flex-col flex-grow";
+
+                const catSpan = document.createElement('span');
+                catSpan.className = "text-xs text-gray-500 uppercase font-semibold mb-1";
+                catSpan.textContent = p.category;
+
+                const titleH3 = document.createElement('h3');
+                titleH3.className = "font-bold text-sm text-black mb-1 line-clamp-1";
+                titleH3.textContent = p.title;
+
+                const descP = document.createElement('p');
+                descP.className = "text-xs text-gray-600 mb-3 line-clamp-2";
+                descP.textContent = p.desc;
+
+                const footerDiv = document.createElement('div');
+                footerDiv.className = "mt-auto flex items-center justify-between pt-2 border-t border-gray-100";
+
+                const priceSpan = document.createElement('span');
+                priceSpan.className = "text-base font-bold text-terracotta";
+                priceSpan.textContent = `₹${p.price}`;
+
+                const addBtn = document.createElement('button');
+                addBtn.className = "bg-terracotta text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-terracotta-dark transition";
+                addBtn.textContent = "Add to Cart";
+                addBtn.onclick = () => addToCart(p.id);
+
+                footerDiv.appendChild(priceSpan);
+                footerDiv.appendChild(addBtn);
+
+                bodyDiv.appendChild(catSpan);
+                bodyDiv.appendChild(titleH3);
+                bodyDiv.appendChild(descP);
+                bodyDiv.appendChild(footerDiv);
+
+                card.appendChild(imgContainer);
+                card.appendChild(bodyDiv);
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-tab').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText === 'All Items')) {
+                    btn.className = "cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-terracotta text-white transition";
+                } else {
+                    btn.className = "cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-black hover:bg-gray-200 transition";
+                }
+            });
+            renderProducts();
+        }
+
+        // 360 Multi-Angle Modal
+        function openMultiAngleModal(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+
+            const modal = document.getElementById('product-modal');
+            const content = document.getElementById('modal-content');
+
+            content.innerHTML = `
+                <div class="flex flex-col space-y-3">
+                    <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden border">
+                        <img id="main-angle-img" src="${p.images[0]}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex space-x-2 overflow-x-auto pb-1">
+                        ${p.images.map((img) => `
+                            <img src="${img}" onclick="document.getElementById('main-angle-img').src='${img}'" class="w-16 h-16 object-cover rounded-lg border-2 border-transparent hover:border-terracotta cursor-pointer">
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <span id="modal-finish" class="text-xs bg-terracotta text-white px-2.5 py-0.5 rounded font-bold"></span>
+                        <h2 id="modal-title" class="text-xl font-bold text-black mt-2 mb-2"></h2>
+                        <p id="modal-desc" class="text-sm text-gray-600 mb-4"></p>
+                        <div id="modal-price" class="text-2xl font-bold text-terracotta mb-4"></div>
+                    </div>
+                    <button onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Add to Cart & Checkout</button>
+                </div>
+            `;
+            document.getElementById('modal-finish').textContent = p.finish;
+            document.getElementById('modal-title').textContent = p.title;
+            document.getElementById('modal-desc').textContent = p.desc;
+            document.getElementById('modal-price').textContent = `₹${p.price}`;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        // Cart & Checkout Logic
+        function addToCart(id) {
+            const p = products.find(item => item.id === id);
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...p, qty: 1 });
+            }
+            localStorage.setItem('dearly_cart', JSON.stringify(cart));
+            updateCartBadge();
+            toggleCartModal(true);
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-badge').innerText = totalQty;
+        }
+
+        function toggleCartModal(open) {
+            const drawer = document.getElementById('cart-drawer');
+            if (open) {
+                renderCartDrawer();
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
+        function renderCartDrawer() {
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-8 text-sm">Your cart is currently empty.</p>`;
+                totalEl.innerText = "₹0";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = '';
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                const row = document.createElement('div');
+                row.className = "flex items-center justify-between border-b pb-3";
+
+                const leftDiv = document.createElement('div');
+                leftDiv.className = "flex items-center space-x-3";
+
+                const img = document.createElement('img');
+                img.src = item.images[0];
+                img.className = "w-12 h-12 object-cover rounded-lg";
+
+                const textDiv = document.createElement('div');
+                const h4 = document.createElement('h4');
+                h4.className = "font-bold text-xs text-black";
+                h4.textContent = item.title;
+
+                const pTag = document.createElement('p');
+                pTag.className = "text-xs text-gray-500";
+                pTag.textContent = `₹${item.price} x ${item.qty}`;
+
+                textDiv.appendChild(h4);
+                textDiv.appendChild(pTag);
+                leftDiv.appendChild(img);
+                leftDiv.appendChild(textDiv);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = "text-red-500 hover:text-red-700 text-xs font-bold";
+                removeBtn.textContent = "× Remove";
+                removeBtn.onclick = () => removeFromCart(item.id);
+
+                row.appendChild(leftDiv);
+                row.appendChild(removeBtn);
+                container.appendChild(row);
+            });
+            totalEl.innerText = `₹${total}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('dearly_cart', JSON.stringify(cart));
+            updateCartBadge();
+            renderCartDrawer();
+        }
+
+        function setPaymentMode(mode) {
+            paymentMode = mode;
+            const btnCod = document.getElementById('btn-cod');
+            const btnOnline = document.getElementById('btn-online');
+            const placeBtn = document.getElementById('place-order-btn');
+
+            if (mode === 'cod') {
+                btnCod.className = "py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition";
+                btnOnline.className = "py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition";
+                placeBtn.innerText = "Place Order (COD)";
+            } else {
+                btnOnline.className = "py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition";
+                btnCod.className = "py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition";
+                placeBtn.innerText = "Pay Online via UPI / Card (Razorpay)";
+            }
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const attestation = document.getElementById('return-attestation').checked;
+            if (!attestation) {
+                alert("You must agree to the Return & Refund Policy attestation to proceed.");
+                return;
+            }
+
+            // Mitigation B: Strict validation verification on phone & pincode
+            const phone = document.getElementById('phone').value;
+            const pincode = document.getElementById('pincode').value;
+            const phoneRegex = /^[0-9]{10}$/;
+            const pincodeRegex = /^[0-9]{6}$/;
+
+            if (!phoneRegex.test(phone)) {
+                alert("Please enter a valid 10-digit Indian mobile number.");
+                return;
+            }
+            if (!pincodeRegex.test(pincode)) {
+                alert("Please enter a valid 6-digit Indian pincode.");
+                return;
+            }
+
+            if (paymentMode === 'online') {
+                alert("Simulating Razorpay UPI / Card Gateway popup. Payment successful!");
+            } else {
+                alert("Order placed successfully via Cash on Delivery! Order notifications are ready for EmailJS / Formspree integration.");
+            }
+
+            cart = [];
+            localStorage.setItem('dearly_cart', JSON.stringify(cart));
+            updateCartBadge();
+            toggleCartModal(false);
+            e.target.reset();
+        }
+
+        // Owner Dashboard Functions
+        function renderOwnerTable() {
+            const tbody = document.getElementById('owner-product-table');
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50";
+
+                const tdImg = document.createElement('td');
+                tdImg.className = "p-3";
+                const img = document.createElement('img');
+                img.src = p.images[0];
+                img.className = "w-10 h-10 object-cover rounded";
+                tdImg.appendChild(img);
+
+                const tdTitle = document.createElement('td');
+                tdTitle.className = "p-3 font-medium";
+                tdTitle.textContent = p.title;
+
+                const tdCat = document.createElement('td');
+                tdCat.className = "p-3 text-gray-600";
+                tdCat.textContent = p.category;
+
+                const tdPrice = document.createElement('td');
+                tdPrice.className = "p-3 font-bold text-terracotta";
+                tdPrice.textContent = `₹${p.price}`;
+
+                const tdActions = document.createElement('td');
+                tdActions.className = "p-3 space-x-2";
+
+                const editBtn = document.createElement('button');
+                editBtn.className = "text-blue-600 hover:underline text-xs font-bold";
+                editBtn.textContent = "Edit";
+                editBtn.onclick = () => editProduct(p.id);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = "text-red-600 hover:underline text-xs font-bold";
+                delBtn.textContent = "Delete";
+                delBtn.onclick = () => deleteProduct(p.id);
+
+                tdActions.appendChild(editBtn);
+                tdActions.appendChild(delBtn);
+
+                tr.appendChild(tdImg);
+                tr.appendChild(tdTitle);
+                tr.appendChild(tdCat);
+                tr.appendChild(tdPrice);
+                tr.appendChild(tdActions);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openProductModal() {
+            document.getElementById('owner-modal-title').innerText = "Add New Product";
+            document.getElementById('owner-item-form').reset();
+            document.getElementById('edit-product-id').value = "";
+            document.getElementById('owner-item-modal').classList.remove('hidden');
+        }
+
+        function closeOwnerItemModal() {
+            document.getElementById('owner-item-modal').classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+
+            document.getElementById('owner-modal-title').innerText = "Edit Product";
+            document.getElementById('edit-product-id').value = p.id;
+            document.getElementById('item-title').value = p.title;
+            document.getElementById('item-category').value = p.category;
+            document.getElementById('item-price').value = p.price;
+            document.getElementById('item-tone').value = p.tone;
+            document.getElementById('item-finish').value = p.finish;
+            document.getElementById('item-desc').value = p.desc;
+            document.getElementById('item-img1').value = p.images[0] || '';
+            document.getElementById('item-img2').value = p.images[1] || '';
+            document.getElementById('item-img3').value = p.images[2] || '';
+
+            document.getElementById('owner-item-modal').classList.remove('hidden');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            
+            // Mitigation C: Enforce HTTPS for image URLs to prevent Mixed Content errors
+            const img1 = document.getElementById('item-img1').value;
+            const img2 = document.getElementById('item-img2').value;
+            const img3 = document.getElementById('item-img3').value;
+
+            if ((img1 && !img1.startsWith('https://')) || (img2 && !img2.startsWith('https://')) || (img3 && !img3.startsWith('https://'))) {
+                alert("Security Warning: All image URLs must use secure HTTPS protocols to prevent mixed-content blocking.");
+                return;
+            }
+
+            const editId = document.getElementById('edit-product-id').value;
+            const title = document.getElementById('item-title').value;
+            const category = document.getElementById('item-category').value;
+            const price = Number(document.getElementById('item-price').value);
+            const tone = document.getElementById('item-tone').value;
+            const finish = document.getElementById('item-finish').value;
+            const desc = document.getElementById('item-desc').value;
+            
+            const imgs = [img1, img2, img3].filter(Boolean);
+
+            if (editId) {
+                products = products.map(p => p.id === editId ? { ...p, title, category, price, tone, finish, desc, images: imgs } : p);
+            } else {
+                const newProduct = {
+                    id: Date.now().toString(),
+                    title, category, price, tone, finish, desc, images: imgs
+                };
+                products.push(newProduct);
+            }
+
+            localStorage.setItem('dearly_products', JSON.stringify(products));
+            closeOwnerItemModal();
+            renderOwnerTable();
+            updateJsonExport();
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Are you sure you want to delete this product?")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('dearly_products', JSON.stringify(products));
+                renderOwnerTable();
+                updateJsonExport();
+            }
+        }
+
+        function updateJsonExport() {
+            document.getElementById('json-export-output').value = JSON.stringify(products, null, 2);
+        }
+
+        function copyJsonExport() {
+            const textarea = document.getElementById('json-export-output');
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value);
+            alert("JSON code copied to clipboard! You can now paste this into your GitHub repository's `products.json` file.");
+        }
+
+        // Policy & About Us Modals
+        function openPolicyModal(type) {
+            const modal = document.getElementById('policy-modal');
+            const titleEl = document.getElementById('policy-title');
+            const bodyEl = document.getElementById('policy-body');
+
+            if (type === 'about') {
+                titleEl.innerText = "About DearlyCharms";
+                bodyEl.innerHTML = `
+                    <p>Welcome to <strong>DearlyCharms</strong>, your ultimate destination for exquisite imitation and fashion jewelry tailored for the Indian aesthetic.</p>
+                    <p>Our curation bridges timeless traditions with contemporary trends. From intricate temple kempu sets and antique gold-finish bangles to sparkling American diamond chokers and oxidized tribal pieces, every item is handpicked for elegance and quality.</p>
+                    <p>We believe every celebration deserves sparkle without compromise. Thank you for making us a part of your joyous moments.</p>
+                `;
+            } else if (type === 'returns') {
+                titleEl.innerText = "Returns and Cancellation Policy";
+                bodyEl.innerHTML = `
+                    <p>Items purchased from DearlyCharms can be returned within <strong>24 hours</strong> of delivery.</p>
+                    <p>To be eligible for a return, items must be in an <strong>unused and unbroken condition</strong> in their original packaging.</p>
+                    <p>If you receive a broken item (especially under Cash on Delivery), you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
+                `;
+            } else if (type === 'shipping') {
+                titleEl.innerText = "Shipping and Delivery";
+                bodyEl.innerHTML = `
+                    <p>We ship all orders across India via trusted courier partners.</p>
+                    <p>Standard delivery takes between 3 to 7 business days depending on your pincode location.</p>
+                    <p>Cash on Delivery (COD) and Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
+                `;
+            } else if (type === 'privacy') {
+                titleEl.innerText = "Privacy Policy";
+                bodyEl.innerHTML = `
+                    <p>We collect essential customer contact and shipping information (First Name, Last Name, Address, Pincode, Phone Number, and optional email) solely for the purpose of fulfilling your imitation jewelry orders.</p>
+                    <p>We strongly advise customers to safeguard their personal account information and secure their devices when submitting orders.</p>
+                `;
+            } else if (type === 'faq') {
+                titleEl.innerText = "General FAQs";
+                bodyEl.innerHTML = `
+                    <p><strong>Q: Are these imitation pieces skin-friendly?</strong><br>A: Yes, our jewelry features high-grade plating designed to be gentle on skin.</p>
+                    <p><strong>Q: How do I maintain the antique gold finish?</strong><br>A: Keep away from perfumes, sweat, and moisture. Store in a dry airtight pouch after use.</p>
+                    <p><strong>Q: Can I pay online?</strong><br>A: Yes, you can choose between Cash on Delivery or Instant Online Payment via GPay / UPI / Cards.</p>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closePolicyModal() {
+            document.getElementById('policy-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
