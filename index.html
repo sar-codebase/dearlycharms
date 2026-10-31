@@ -601,49 +601,30 @@
         }
     </script>
 
-async function loadProducts() {
-    try {
-        const response = await fetch('products.json?v=' + new Date().getTime());
-        const products = await response.json();
-        
-        // Let's print this in your F12 console to see if '<Temp>' is inside it!
-        console.log("Fetched Products Data:", products);
-        
-        // If your original rendering function had a different name, 
-        // replace renderProductCatalog(products) with it:
-        renderProductCatalog(products);
-    } catch (error) {
-        console.error('Error loading catalog:', error);
-    }
-}
-
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', loadProducts);
-
 <script>
-(async function() {
-    try {
-        console.log("Attempting to fetch products.json...");
-        const response = await fetch('products.json?v=' + new Date().getTime());
-        
-        if (!response.ok) {
-            console.error("HTTP error! status:", response.status);
-            return;
+    async function loadProducts() {
+        try {
+            const response = await fetch('products.json?v=' + new Date().getTime());
+            if (!response.ok) {
+                console.error("HTTP error! status:", response.status);
+                return;
+            }
+            
+            const products = await response.json();
+            console.log("SUCCESS! Fetched Products Data:", products);
+            
+            // Replace renderProductCatalog if your site uses a different function name to display products
+            if (typeof renderProductCatalog === 'function') {
+                renderProductCatalog(products);
+            } else {
+                console.warn("renderProductCatalog function not found, check your function name.");
+            }
+        } catch (error) {
+            console.error('Error loading catalog:', error);
         }
-        
-        const products = await response.json();
-        console.log("SUCCESS! Fetched Products Data:", products);
-        
-        // Call your rendering function here (replace renderProductCatalog if your function has a different name)
-        if (typeof renderProductCatalog === 'function') {
-            renderProductCatalog(products);
-        } else {
-            console.warn("renderProductCatalog function not found, check your function name.");
-        }
-    } catch (error) {
-        console.error('Fetch caught an error:', error);
     }
-})();
+
+    document.addEventListener('DOMContentLoaded', loadProducts);
 </script>
 </body>
 </html>
