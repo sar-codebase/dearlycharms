@@ -232,7 +232,7 @@
         let currentCategory = 'All';
         let paymentMode = 'cod';
 
-        // Load products dynamically on startup and sanitize cart against loaded products
+        // Load products dynamically on startup and safely initialize cart
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const response = await fetch('products.json?v=' + new Date().getTime());
@@ -248,16 +248,18 @@
                 products = defaultProducts;
             }
 
-            // Ensure products is never empty before sanitizing/rendering
             if (!products || products.length === 0) {
                 products = defaultProducts;
             }
 
-            // Sanitize cart: Keep only items that actually exist in the current product catalog
+            // Load and normalize cart structure safely without aggressive purging
             try {
                 const savedCart = JSON.parse(localStorage.getItem('dearly_cart'));
                 if (Array.isArray(savedCart)) {
-                    cart = savedCart.filter(item => item && item.id && item.qty && products.some(p => p.id === item.id));
+                    cart = savedCart.map(item => ({
+                        id: String(item.id),
+                        qty: Number(item.qty) || 1
+                    })).filter(item => item.id && item.qty > 0);
                 } else {
                     cart = [];
                 }
@@ -267,11 +269,9 @@
             }
             localStorage.setItem('dearly_cart', JSON.stringify(cart));
 
-            // Render everything safely now that products and cart are fully synced
             renderProducts();
             updateCartBadge();
             
-            // Refresh cart drawer if it's open
             if (!document.getElementById('cart-drawer').classList.contains('hidden')) {
                 renderCartDrawer();
             }
@@ -313,7 +313,7 @@
 
                 const finishTag = document.createElement('span');
                 finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded";
-                finishTag.textContent = p.finish;
+                finishTag.textContent = p.finish || 'Jewelry';
 
                 const viewBtn = document.createElement('button');
                 viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3";
@@ -378,7 +378,7 @@
 
         // 360 Multi-Angle Modal
         function openMultiAngleModal(id) {
-            const p = products.find(item => item.id === id);
+            const p = products.find(item => String(item.id) === String(id));
             if (!p) return;
 
             const modal = document.getElementById('product-modal');
@@ -405,7 +405,7 @@
                     <button onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Add to Cart & Checkout</button>
                 </div>
             `;
-            document.getElementById('modal-finish').textContent = p.finish;
+            document.getElementById('modal-finish').textContent = p.finish || '';
             document.getElementById('modal-title').textContent = p.title;
             document.getElementById('modal-desc').textContent = p.desc;
             document.getElementById('modal-price').textContent = `₹${p.price}`;
@@ -417,13 +417,14 @@
             document.getElementById('product-modal').classList.add('hidden');
         }
 
-        // Cart & Checkout Logic
+        // Cart & Checkout Logic with Robust Fallback Lookup
         function addToCart(id) {
-            const existing = cart.find(item => item.id === id);
+            const stringId = String(id);
+            const existing = cart.find(item => String(item.id) === stringId);
             if (existing) {
                 existing.qty += 1;
             } else {
-                cart.push({ id: id, qty: 1 });
+                cart.push({ id: stringId, qty: 1 });
             }
             localStorage.setItem('dearly_cart', JSON.stringify(cart));
             updateCartBadge();
@@ -431,7 +432,7 @@
         }
 
         function updateCartBadge() {
-            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
             document.getElementById('cart-badge').innerText = totalQty;
         }
 
@@ -462,8 +463,18 @@
             container.innerHTML = '';
             
             cart.forEach(cartItem => {
-                const p = products.find(item => item.id === cartItem.id);
-                if (!p) return;
+                // Find product with safe type-insensitive matching
+                let p = products.find(item => String(item.id) === String(cartItem.id));
+                
+                // Bulletproof Fallback: If product isn't found in current catalog, create a safe placeholder so user can remove it
+                if (!p) {
+                    p = {
+                        id: cartItem.id,
+                        title: `Catalog Item #${cartItem.id}`,
+                        price: 549,
+                        images: ["https://images.unsplash.com/photo-1611591475275-555ba132b974?auto=format&fit=crop&w=200&q=80"]
+                    };
+                }
 
                 total += p.price * cartItem.qty;
                 const row = document.createElement('div');
@@ -534,11 +545,12 @@
         }
 
         function updateQuantity(id, newQty) {
+            const stringId = String(id);
             if (newQty <= 0) {
-                removeFromCart(id);
+                removeFromCart(stringId);
                 return;
             }
-            const item = cart.find(i => i.id === id);
+            const item = cart.find(i => String(i.id) === stringId);
             if (item) {
                 item.qty = newQty;
                 localStorage.setItem('dearly_cart', JSON.stringify(cart));
@@ -548,7 +560,8 @@
         }
 
         function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
+            const stringId = String(id);
+            cart = cart.filter(item => String(item.id) !== stringId);
             localStorage.setItem('dearly_cart', JSON.stringify(cart));
             updateCartBadge();
             renderCartDrawer();
@@ -654,6 +667,5 @@
             document.getElementById('policy-modal').classList.add('hidden');
         }
     </script>
-
 </body>
 </html>
