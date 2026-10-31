@@ -134,7 +134,7 @@
                 <h2 class="text-xl font-bold text-terracotta">Your Shopping Cart</h2>
                 <button onclick="toggleCartModal(false)" class="text-gray-500 hover:text-black text-xl font-bold">&times;</button>
             </div>
-            <div id="cart-items-container" class="flex-grow space-y-4 mb-6 overflow-y-auto">
+            <div id="cart-items-container" class="flex-grow space-y-4 mb-6 overflow-y-auto border border-red-200 p-2 min-h-[150px]">
                 <!-- Cart items -->
             </div>
             <div id="checkout-section" class="border-t pt-4">
@@ -209,7 +209,7 @@
     </div>
 
 <script>
-        // Fallback Dataset matching your products.json structure
+        // Guaranteed Default Dataset so products are ALWAYS available instantly
         const defaultProducts = [
             {
                 id: "1",
@@ -244,7 +244,7 @@
         let currentCategory = 'All';
         let paymentMode = 'cod';
 
-        // Load cart immediately on startup
+        // Load cart immediately on execution
         try {
             const savedCart = JSON.parse(localStorage.getItem('dearly_cart'));
             if (Array.isArray(savedCart)) {
@@ -257,8 +257,11 @@
             cart = [];
         }
 
-        // Fetch products.json dynamically on startup, updating the catalog seamlessly
+        // Initialize App & Fetch products.json asynchronously without blocking rendering
         document.addEventListener('DOMContentLoaded', async () => {
+            renderProducts();
+            updateCartBadge();
+
             try {
                 const response = await fetch('products.json?v=' + new Date().getTime());
                 if (response.ok) {
@@ -266,25 +269,21 @@
                     if (Array.isArray(fetched) && fetched.length > 0) {
                         products = fetched;
                         console.log("SUCCESS! Loaded from products.json:", products);
+                        renderProducts(); // Re-render grid with fetched data
                     }
-                } else {
-                    console.warn("Could not load products.json, using defaults.");
                 }
             } catch (error) {
-                console.error('Fetch error, falling back to defaults:', error);
+                console.warn("Using built-in product dataset.");
             }
-
-            renderProducts();
-            updateCartBadge();
             
             if (!document.getElementById('cart-drawer').classList.contains('hidden')) {
                 renderCartDrawer();
             }
         });
 
-        // Customer Render Function
         function renderProducts() {
             const grid = document.getElementById('product-grid');
+            if (!grid) return;
             const sortBy = document.getElementById('sort-select').value;
             const colorTone = document.getElementById('color-filter').value;
 
@@ -422,7 +421,7 @@
             document.getElementById('product-modal').classList.add('hidden');
         }
 
-        // Cart & Checkout Logic with Unbreakable Fallback Rendering
+        // Cart & Checkout Logic with Absolute Container Safety
         function addToCart(id) {
             const stringId = String(id);
             const existing = cart.find(item => String(item.id) === stringId);
@@ -438,11 +437,13 @@
 
         function updateCartBadge() {
             const totalQty = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-            document.getElementById('cart-badge').innerText = totalQty;
+            const badge = document.getElementById('cart-badge');
+            if (badge) badge.innerText = totalQty;
         }
 
         function toggleCartModal(open) {
             const drawer = document.getElementById('cart-drawer');
+            if (!drawer) return;
             if (open) {
                 renderCartDrawer();
                 drawer.classList.remove('hidden');
@@ -454,6 +455,7 @@
         function renderCartDrawer() {
             const container = document.getElementById('cart-items-container');
             const totalEl = document.getElementById('cart-total');
+            if (!container || !totalEl) return;
 
             if (!cart || cart.length === 0) {
                 container.innerHTML = `<p class="text-center text-gray-500 py-8 text-sm">Your cart is currently empty.</p>`;
@@ -467,7 +469,7 @@
             cart.forEach(cartItem => {
                 let p = products.find(item => String(item.id) === String(cartItem.id));
                 
-                // Bulletproof Fallback: Guarantees items render even if IDs mismatch or products.json is delayed/unreachable
+                // Bulletproof Fallback: Guarantees items render even if IDs mismatch
                 if (!p) {
                     p = {
                         id: cartItem.id,
@@ -479,7 +481,7 @@
 
                 total += p.price * cartItem.qty;
                 const row = document.createElement('div');
-                row.className = "flex items-center justify-between border-b pb-3 gap-3";
+                row.className = "flex items-center justify-between border-b pb-3 gap-3 bg-white p-2 rounded";
 
                 const leftDiv = document.createElement('div');
                 leftDiv.className = "flex items-center space-x-3";
