@@ -72,7 +72,9 @@
     "desc": "Nagapadam Set-Description",
     "images": [
       "images/Nagapdam-set.jpg"
-    ]
+    ],
+    "onSale": true,
+    "originalPrice": 599
   },
   {
     "id": "1793437216396",
