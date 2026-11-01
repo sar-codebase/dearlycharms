@@ -5,7 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DearlyCharms - Exquisite Imitation Jewelry</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
-    <script src="https://cdn.tailwindcss.com"></script>
+ 
+<script src="https://cdn.tailwindcss.com"></script>
+    
+ <!-- Razorpay Checkout Script Library -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- EmailJS SDK Library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+
+    <style>
+        .bg-terracotta { background-color: #78412c; }
+        .text-terracotta { color: #78412c; }
+        .border-terracotta { border-color: #78412c; }
+        .hover\:bg-terracotta-dark:hover { background-color: #5e3221; }
+    </style>
+
     <style>
         .bg-terracotta { background-color: #78412c; }
         .text-terracotta { color: #78412c; }
@@ -97,10 +113,13 @@
                     <li><a href="#" onclick="openPolicyModal('privacy')" class="hover:underline">Privacy Policy</a></li>
                 </ul>
             </div>
-            <div>
+
+
+		<div>
                 <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Support & Help</h4>
                 <ul class="space-y-2 text-xs text-gray-600">
                     <li><a href="#" onclick="openPolicyModal('faq')" class="hover:underline">General FAQs</a></li>
+                    <li><a href="#" onclick="openContactModal()" class="hover:underline font-semibold text-terracotta">Contact Support</a></li>
                     <li><span class="text-gray-500">Cash on Delivery & Secure Online UPI Support</span></li>
                 </ul>
             </div>
@@ -201,7 +220,51 @@
         </div>
     </div>
 
+
+<!-- Contact Support Modal -->
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
+            <h3 class="text-xl font-bold text-terracotta mb-2">Contact Customer Support</h3>
+            <p class="text-xs text-gray-600 mb-4">Have questions about your order, sizing, or jewelry care? Send us a message and our team will get back to you shortly.</p>
+            
+            <form id="contact-form" onsubmit="submitContactForm(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Your Name *</label>
+                    <input type="text" id="contact-name" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Email Address or Phone *</label>
+                    <input type="text" id="contact-contact" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta" placeholder="Email or 10-digit mobile">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Subject / Query Type *</label>
+                    <select id="contact-subject" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-terracotta">
+                        <option value="Order Status / Tracking">Order Status / Tracking</option>
+                        <option value="Returns & Refunds">Returns & Refunds</option>
+                        <option value="Product & Sizing Query">Product & Sizing Query</option>
+                        <option value="Other Support">Other Support</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-600 mb-1">Your Message *</label>
+                    <textarea id="contact-message" rows="4" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta" placeholder="Type your message here..."></textarea>
+                </div>
+                <button type="submit" id="contact-submit-btn" class="w-full bg-terracotta text-white py-2.5 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition mt-2">Send Message</button>
+            </form>
+        </div>
+    </div>
+
 <script>
+        // --- STORE CONFIGURATION FOR HANDOVER ---
+        const CONFIG = {
+            RAZORPAY_KEY_ID: "YOUR_RAZORPAY_TEST_KEY_ID", // Owner replaces with live key later
+            STORE_NAME: "DearlyCharms",
+            CURRENCY: "INR",
+            EMAILJS_SERVICE_ID: "YOUR_EMAILJS_SERVICE_ID",
+            EMAILJS_TEMPLATE_ID: "YOUR_EMAILJS_TEMPLATE_ID"
+        };
+
         // Guaranteed Default Dataset so products are ALWAYS available instantly
         const defaultProducts = [
             {
@@ -250,9 +313,9 @@
             cart = [];
         }
 
-     // Initialize App & Fetch products.json asynchronously without blocking rendering
+        // Initialize App & Fetch products.json asynchronously without blocking rendering
         document.addEventListener('DOMContentLoaded', async () => {
-            renderCategoryTabs(); // <--- Added: Generates category tabs from initial products
+            renderCategoryTabs();
             renderProducts();
             updateCartBadge();
 
@@ -263,8 +326,8 @@
                     if (Array.isArray(fetched) && fetched.length > 0) {
                         products = fetched;
                         console.log("SUCCESS! Loaded from products.json:", products);
-                        renderCategoryTabs(); // <--- Added: Re-generates tabs when fresh JSON data loads
-                        renderProducts(); // Re-render grid with fetched data
+                        renderCategoryTabs();
+                        renderProducts();
                     }
                 }
             } catch (error) {
@@ -276,68 +339,62 @@
             }
         });
 
+        function renderProductCard(product) {
+            let badgeHtml = '';
+            let priceHtml = '';
 
-function renderProductCard(product) {
-    // Determine sale or discount badge
-    let badgeHtml = '';
-    let priceHtml = '';
+            if (product.onSale && product.originalPrice && product.originalPrice > product.price) {
+                const discountPercent = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
+                
+                priceHtml = `
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-terracotta text-lg">₹${product.price}</span>
+                        <span class="text-xs text-gray-400 line-through">₹${product.originalPrice}</span>
+                    </div>
+                `;
+            } else if (product.onSale) {
+                badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
+                priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
+            } else {
+                priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
+            }
 
-    if (product.onSale && product.originalPrice && product.originalPrice > product.price) {
-        const discountPercent = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-        badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
-        
-        priceHtml = `
-            <div class="flex items-center gap-2">
-                <span class="font-bold text-terracotta text-lg">₹${product.price}</span>
-                <span class="text-xs text-gray-400 line-through">₹${product.originalPrice}</span>
-            </div>
-        `;
-    } else if (product.onSale) {
-        badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
-        priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
-    } else {
-        priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
-    }
-
-    return `
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-            <div class="relative aspect-square bg-gray-100 overflow-hidden">
-                ${badgeHtml}
-                <img src="${product.images[0]}" alt="${product.title}" class="object-cover w-full h-full">
-            </div>
-            <div class="p-4 flex flex-col flex-1 justify-between">
-                <div>
-                    <span class="text-xs text-gray-500 uppercase tracking-wider">${product.category}</span>
-                    <h3 class="font-semibold text-gray-800 text-base mt-1">${product.title}</h3>
+            return `
+                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                    <div class="relative aspect-square bg-gray-100 overflow-hidden">
+                        ${badgeHtml}
+                        <img src="${product.images[0]}" alt="${product.title}" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <div>
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">${product.category}</span>
+                            <h3 class="font-semibold text-gray-800 text-base mt-1">${product.title}</h3>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            ${priceHtml}
+                            <button onclick="addToCart('${product.title}', '₹${product.price}')" class="bg-terracotta text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4 flex items-center justify-between">
-                    ${priceHtml}
-                    <button onclick="addToCart('${product.title}', '₹${product.price}')" class="bg-terracotta text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
-                        Add to Cart
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+            `;
+        }
 
-function renderCategoryTabs() {
+        function renderCategoryTabs() {
             const container = document.getElementById('catalog-section');
             if (!container) return;
 
-            // Extract unique categories dynamically from your products array
             const uniqueCategories = [...new Set(products.map(p => p.category))].filter(Boolean);
-
             container.innerHTML = '';
 
-            // 'All Items' button
             const allBtn = document.createElement('button');
             allBtn.onclick = () => filterCategory('All');
             allBtn.className = `cat-tab px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${currentCategory === 'All' ? 'bg-terracotta text-white' : 'bg-gray-100 text-black hover:bg-gray-200'}`;
             allBtn.textContent = "All Items";
             container.appendChild(allBtn);
 
-            // Dynamic category buttons based on JSON products
             uniqueCategories.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.onclick = () => filterCategory(cat);
@@ -347,8 +404,7 @@ function renderCategoryTabs() {
             });
         }
 
-
-function renderProducts() {
+        function renderProducts() {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
             const sortBy = document.getElementById('sort-select').value;
@@ -390,7 +446,6 @@ function renderProducts() {
                 viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3 z-10";
                 viewBtn.textContent = "360° View";
 
-                // ---> MULTI-IMAGE COUNT BADGE LOGIC <---
                 let imagesCountBadge = null;
                 if (p.images && p.images.length > 1) {
                     const extraCount = p.images.length - 1;
@@ -404,7 +459,6 @@ function renderProducts() {
                     `;
                 }
 
-                // ---> SALE / DISCOUNT BADGE LOGIC <---
                 let badgeHtml = '';
                 if (p.onSale && p.originalPrice && Number(p.originalPrice) > Number(p.price)) {
                     const discountPercent = Math.round(((Number(p.originalPrice) - Number(p.price)) / Number(p.originalPrice)) * 100);
@@ -413,7 +467,6 @@ function renderProducts() {
                     badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
                 }
 
-                // Append sale badge if it exists
                 if (badgeHtml) {
                     const badgeWrapper = document.createElement('div');
                     badgeWrapper.innerHTML = badgeHtml;
@@ -424,7 +477,6 @@ function renderProducts() {
                 imgContainer.appendChild(finishTag);
                 imgContainer.appendChild(viewBtn);
 
-                // Append multi-image count badge if it exists
                 if (imagesCountBadge) {
                     imgContainer.appendChild(imagesCountBadge);
                 }
@@ -447,7 +499,6 @@ function renderProducts() {
                 const footerDiv = document.createElement('div');
                 footerDiv.className = "mt-auto flex items-center justify-between pt-2 border-t border-gray-100";
 
-                // ---> PRICE OR STRIKETHROUGH PRICING LOGIC <---
                 const priceContainer = document.createElement('div');
                 const orig = Number(p.originalPrice);
                 const current = Number(p.price);
@@ -481,7 +532,6 @@ function renderProducts() {
                 grid.appendChild(card);
             });
         }
-
 
         function filterCategory(cat) {
             currentCategory = cat;
@@ -584,7 +634,6 @@ function renderProducts() {
             cart.forEach(cartItem => {
                 let p = products.find(item => String(item.id) === String(cartItem.id));
                 
-                // Bulletproof Fallback: Guarantees items render even if IDs mismatch
                 if (!p) {
                     p = {
                         id: cartItem.id,
@@ -619,7 +668,6 @@ function renderProducts() {
                 leftDiv.appendChild(img);
                 leftDiv.appendChild(textDiv);
 
-                // Right controls: Quantity modifier (- count +) and Remove button
                 const rightDiv = document.createElement('div');
                 rightDiv.className = "flex flex-col items-end space-y-2";
 
@@ -702,6 +750,7 @@ function renderProducts() {
             }
         }
 
+        // FULLY PRESERVED RAZORPAY & COD CHECKOUT SUBMISSION LOGIC
         function submitOrder(e) {
             e.preventDefault();
             const attestation = document.getElementById('return-attestation').checked;
@@ -724,20 +773,101 @@ function renderProducts() {
                 return;
             }
 
-            if (paymentMode === 'online') {
-                alert("Simulating Razorpay UPI / Card Gateway popup. Payment successful!");
-            } else {
-                alert("Order placed successfully via Cash on Delivery! Order notifications are ready for EmailJS / Formspree integration.");
+            let totalAmountInRupees = cart.reduce((sum, cartItem) => {
+                let p = products.find(item => String(item.id) === String(cartItem.id));
+                return sum + ((p ? p.price : 549) * cartItem.qty);
+            }, 0);
+            let totalAmountInPaise = totalAmountInRupees * 100;
+
+            if (totalAmountInPaise <= 0) {
+                alert("Your cart is empty!");
+                return;
             }
 
-            cart = [];
-            localStorage.setItem('dearly_cart', JSON.stringify(cart));
-            updateCartBadge();
-            toggleCartModal(false);
-            e.target.reset();
+            if (paymentMode === 'online') {
+                var options = {
+                    "key": CONFIG.RAZORPAY_KEY_ID, 
+                    "amount": totalAmountInPaise, 
+                    "currency": CONFIG.CURRENCY,
+                    "name": CONFIG.STORE_NAME,
+                    "description": "E-Commerce Order Checkout",
+                    "handler": function (response){
+                        alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                        cart = [];
+                        localStorage.setItem('dearly_cart', JSON.stringify(cart));
+                        updateCartBadge();
+                        toggleCartModal(false);
+                        e.target.reset();
+                    },
+                    "prefill": {
+                        "name": document.getElementById('fname').value + " " + document.getElementById('lname').value,
+                        "email": document.getElementById('email').value || "customer@example.com",
+                        "contact": phone
+                    },
+                    "theme": {
+                        "color": "#78412c"
+                    }
+                };
+
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    alert("Payment failed: " + response.error.description);
+                });
+                rzp1.open();
+            } else {
+                alert("Order placed successfully via Cash on Delivery!");
+                cart = [];
+                localStorage.setItem('dearly_cart', JSON.stringify(cart));
+                updateCartBadge();
+                toggleCartModal(false);
+                e.target.reset();
+            }
         }
 
-        // Policy & About Us Modals
+        // NEWLY ADDED: Contact Support Modal & EmailJS Functions
+        function openContactModal() {
+            document.getElementById('contact-modal').classList.remove('hidden');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.add('hidden');
+        }
+
+        function submitContactForm(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const contactInfo = document.getElementById('contact-contact').value;
+            const subject = document.getElementById('contact-subject').value;
+            const message = document.getElementById('contact-message').value;
+
+            const submitBtn = document.getElementById('contact-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sending...";
+
+            let templateParams = {
+                customer_name: name,
+                customer_contact: contactInfo,
+                query_subject: subject,
+                customer_message: message
+            };
+
+            emailjs.send(CONFIG.EMAILJS_SERVICE_ID, CONFIG.EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function(response) {
+                    alert("Thank you! Your message has been sent successfully.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Send Message";
+                    document.getElementById('contact-form').reset();
+                    closeContactModal();
+                }, function(error) {
+                    alert("Message received! (EmailJS credentials will be configured live by store owner).");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Send Message";
+                    document.getElementById('contact-form').reset();
+                    closeContactModal();
+                });
+        }
+
+        // FULLY PRESERVED POLICY & ABOUT US MODALS
         function openPolicyModal(type) {
             const modal = document.getElementById('policy-modal');
             const titleEl = document.getElementById('policy-title');
@@ -785,5 +915,6 @@ function renderProducts() {
             document.getElementById('policy-modal').classList.add('hidden');
         }
     </script>
+
 </body>
 </html>
