@@ -15,17 +15,16 @@
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col font-sans">
 
-    <!-- Header -->
+<!-- Header -->
     <header class="border-b border-gray-200 sticky top-0 bg-white z-40">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          
-<div class="flex items-center space-x-3">
-                <span class="bg-terracotta text-white font-bold text-xl px-3 py-1 rounded">DE</span>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-terracotta">DearlyEthnic</h1>
-                    <p class="text-xs text-gray-500 uppercase tracking-widest">Jewelry & Handloom Drapes</p>
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            
+            <!-- Logo Section -->
+            <a href="index.html" class="flex items-center">
+                <img src="images/DearlyEthnic-logo.jpg" alt="DearlyEthnic Logo" class="h-16 md:h-20 w-auto">
+            </a>
+
+            <!-- Cart Button Section -->
             <div class="flex items-center space-x-4">
                 <button onclick="toggleCartModal(true)" class="relative p-2 text-terracotta hover:bg-gray-100 rounded-full transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,6 +35,7 @@
             </div>
         </div>
     </header>
+
 
     <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
@@ -277,6 +277,35 @@
             }
         });
 
+function renderProductCard(product) {
+    // Check if product has sale flag enabled and render badge dynamically
+    const saleBadgeHtml = product.onSale 
+        ? `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>` 
+        : '';
+
+    return `
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+            <div class="relative aspect-square bg-gray-100 overflow-hidden">
+                <!-- Sale Badge (Top Right) -->
+                ${saleBadgeHtml}
+                
+                <img src="${product.images[0]}" alt="${product.title}" class="object-cover w-full h-full">
+            </div>
+            <div class="p-4 flex flex-col flex-1 justify-between">
+                <div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wider">${product.category}</span>
+                    <h3 class="font-semibold text-gray-800 text-base mt-1">${product.title}</h3>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                    <span class="font-bold text-terracotta text-lg">₹${product.price}</span>
+                    <button onclick="addToCart('${product.title}', '₹${product.price}')" class="bg-terracotta text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
 function renderCategoryTabs() {
             const container = document.getElementById('catalog-section');
