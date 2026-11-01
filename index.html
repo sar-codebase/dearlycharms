@@ -277,30 +277,33 @@
             }
         });
 
-function renderProductCard(product) {
-    const hasDiscount = product.onSale && product.originalPrice && product.originalPrice > product.price;
-    
-    let discountBadge = '';
-    let priceDisplay = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
 
-    if (hasDiscount) {
+function renderProductCard(product) {
+    // Determine sale or discount badge
+    let badgeHtml = '';
+    let priceHtml = '';
+
+    if (product.onSale && product.originalPrice && product.originalPrice > product.price) {
         const discountPercent = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-        discountBadge = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
+        badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
         
-        priceDisplay = `
+        priceHtml = `
             <div class="flex items-center gap-2">
                 <span class="font-bold text-terracotta text-lg">₹${product.price}</span>
                 <span class="text-xs text-gray-400 line-through">₹${product.originalPrice}</span>
             </div>
         `;
     } else if (product.onSale) {
-        discountBadge = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
+        badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
+        priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
+    } else {
+        priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
     }
 
     return `
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
             <div class="relative aspect-square bg-gray-100 overflow-hidden">
-                ${discountBadge}
+                ${badgeHtml}
                 <img src="${product.images[0]}" alt="${product.title}" class="object-cover w-full h-full">
             </div>
             <div class="p-4 flex flex-col flex-1 justify-between">
@@ -309,7 +312,7 @@ function renderProductCard(product) {
                     <h3 class="font-semibold text-gray-800 text-base mt-1">${product.title}</h3>
                 </div>
                 <div class="mt-4 flex items-center justify-between">
-                    ${priceDisplay}
+                    ${priceHtml}
                     <button onclick="addToCart('${product.title}', '₹${product.price}')" class="bg-terracotta text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
                         Add to Cart
                     </button>
