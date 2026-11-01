@@ -348,7 +348,7 @@ function renderCategoryTabs() {
             });
         }
 
-        function renderProducts() {
+  function renderProducts() {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
             const sortBy = document.getElementById('sort-select').value;
@@ -383,12 +383,28 @@ function renderCategoryTabs() {
                 img.className = "w-full h-full object-cover group-hover:scale-105 transition duration-300";
 
                 const finishTag = document.createElement('span');
-                finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded";
+                finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded z-10";
                 finishTag.textContent = p.finish || 'Jewelry';
 
                 const viewBtn = document.createElement('button');
-                viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3";
+                viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3 z-10";
                 viewBtn.textContent = "360° View";
+
+                // ---> SALE / DISCOUNT BADGE LOGIC <---
+                let badgeHtml = '';
+                if (p.onSale && p.originalPrice && p.originalPrice > p.price) {
+                    const discountPercent = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
+                    badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
+                } else if (p.onSale) {
+                    badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
+                }
+
+                // Append badge if it exists
+                if (badgeHtml) {
+                    const badgeWrapper = document.createElement('div');
+                    badgeWrapper.innerHTML = badgeHtml;
+                    imgContainer.appendChild(badgeWrapper.firstElementChild);
+                }
 
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(finishTag);
@@ -412,16 +428,25 @@ function renderCategoryTabs() {
                 const footerDiv = document.createElement('div');
                 footerDiv.className = "mt-auto flex items-center justify-between pt-2 border-t border-gray-100";
 
-                const priceSpan = document.createElement('span');
-                priceSpan.className = "text-base font-bold text-terracotta";
-                priceSpan.textContent = `₹${p.price}`;
+                // ---> PRICE OR STRIKETHROUGH PRICING LOGIC <---
+                const priceContainer = document.createElement('div');
+                if (p.onSale && p.originalPrice && p.originalPrice > p.price) {
+                    priceContainer.className = "flex items-center gap-2";
+                    priceContainer.innerHTML = `
+                        <span class="text-base font-bold text-terracotta">₹${p.price}</span>
+                        <span class="text-xs text-gray-400 line-through">₹${p.originalPrice}</span>
+                    `;
+                } else {
+                    priceContainer.className = "text-base font-bold text-terracotta";
+                    priceContainer.textContent = `₹${p.price}`;
+                }
 
                 const addBtn = document.createElement('button');
                 addBtn.className = "bg-terracotta text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-terracotta-dark transition";
                 addBtn.textContent = "Add to Cart";
                 addBtn.onclick = () => addToCart(p.id);
 
-                footerDiv.appendChild(priceSpan);
+                footerDiv.appendChild(priceContainer);
                 footerDiv.appendChild(addBtn);
 
                 bodyDiv.appendChild(catSpan);
