@@ -110,7 +110,7 @@
                 <ul class="space-y-2 text-xs text-gray-600">
                     <li><a href="#" onclick="openPolicyModal('faq')" class="hover:underline">General FAQs</a></li>
                     <li><a href="#" onclick="openContactModal()" class="hover:underline font-semibold text-terracotta">Contact Support</a></li>
-                    <li><span class="text-gray-500">Cash on Delivery & Secure Online UPI Support</span></li>
+                    <li><span class="text-gray-500">Secure Online UPI & Card Payment Support</span></li>
                 </ul>
             </div>
         </div>
@@ -144,17 +144,8 @@
                     <span>Total:</span>
                     <span id="cart-total">₹0</span>
                 </div>
-                
-                <!-- Payment Choice -->
-                <div class="mb-4">
-                    <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Select Payment Method</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="setPaymentMode('cod')" id="btn-cod" class="py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition">Cash on Delivery</button>
-                        <button type="button" onclick="setPaymentMode('online')" id="btn-online" class="py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition">Pay Online (UPI/Cards)</button>
-                    </div>
-                </div>
 
-                <!-- COD Form Fields -->
+                <!-- Checkout Form Fields (Online Payment Only) -->
                 <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-3">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -181,8 +172,8 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-600 mb-1">Email Address (Optional)</label>
-                        <input type="email" id="email" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta">
+                        <label class="block text-xs text-gray-600 mb-1">Email Address *</label>
+                        <input type="email" id="email" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta" placeholder="Required for payment receipt">
                     </div>
 
                     <!-- Mandatory Attestation -->
@@ -195,7 +186,7 @@
                         </label>
                     </div>
 
-                    <button type="submit" id="place-order-btn" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition mt-4">Place Order (COD)</button>
+                    <button type="submit" id="place-order-btn" class="w-full bg-terracotta text-white py-3 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition mt-4">Pay Online via UPI / Card (Razorpay)</button>
                 </form>
             </div>
         </div>
@@ -274,7 +265,6 @@
         let products = [...defaultProducts];
         let cart = [];
         let currentCategory = 'All';
-        let paymentMode = 'cod';
 
         // Load cart immediately on execution
         try {
@@ -314,49 +304,6 @@
                 renderCartDrawer();
             }
         });
-
-        function renderProductCard(product) {
-            let badgeHtml = '';
-            let priceHtml = '';
-
-            if (product.onSale && product.originalPrice && product.originalPrice > product.price) {
-                const discountPercent = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-                badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">${discountPercent}% OFF</span>`;
-                
-                priceHtml = `
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-terracotta text-lg">₹${product.price}</span>
-                        <span class="text-xs text-gray-400 line-through">₹${product.originalPrice}</span>
-                    </div>
-                `;
-            } else if (product.onSale) {
-                badgeHtml = `<span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Sale</span>`;
-                priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
-            } else {
-                priceHtml = `<span class="font-bold text-terracotta text-lg">₹${product.price}</span>`;
-            }
-
-            return `
-                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-                    <div class="relative aspect-square bg-gray-100 overflow-hidden">
-                        ${badgeHtml}
-                        <img src="${product.images[0]}" alt="${product.title}" class="object-cover w-full h-full">
-                    </div>
-                    <div class="p-4 flex flex-col flex-1 justify-between">
-                        <div>
-                            <span class="text-xs text-gray-500 uppercase tracking-wider">${product.category}</span>
-                            <h3 class="font-semibold text-gray-800 text-base mt-1">${product.title}</h3>
-                        </div>
-                        <div class="mt-4 flex items-center justify-between">
-                            ${priceHtml}
-                            <button onclick="addToCart('${product.title}', '₹${product.price}')" class="bg-terracotta text-white px-3 py-1.5 rounded-xl text-sm font-semibold hover:bg-opacity-90 transition">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
 
         function renderCategoryTabs() {
             const container = document.getElementById('catalog-section');
@@ -709,24 +656,7 @@
             renderCartDrawer();
         }
 
-        function setPaymentMode(mode) {
-            paymentMode = mode;
-            const btnCod = document.getElementById('btn-cod');
-            const btnOnline = document.getElementById('btn-online');
-            const placeBtn = document.getElementById('place-order-btn');
-
-            if (mode === 'cod') {
-                btnCod.className = "py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition";
-                btnOnline.className = "py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition";
-                placeBtn.innerText = "Place Order (COD)";
-            } else {
-                btnOnline.className = "py-2 px-3 border border-terracotta bg-terracotta text-white rounded-lg text-xs font-bold transition";
-                btnCod.className = "py-2 px-3 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition";
-                placeBtn.innerText = "Pay Online via UPI / Card (Razorpay)";
-            }
-        }
-
-        // FULLY PRESERVED RAZORPAY & COD CHECKOUT SUBMISSION LOGIC
+        // EXCLUSIVE ONLINE PREPAID CHECKOUT SUBMISSION LOGIC
         function submitOrder(e) {
             e.preventDefault();
             const attestation = document.getElementById('return-attestation').checked;
@@ -737,6 +667,7 @@
 
             const phone = document.getElementById('phone').value;
             const pincode = document.getElementById('pincode').value;
+            const email = document.getElementById('email').value;
             const phoneRegex = /^[0-9]{10}$/;
             const pincodeRegex = /^[0-9]{6}$/;
 
@@ -760,44 +691,35 @@
                 return;
             }
 
-            if (paymentMode === 'online') {
-                var options = {
-                    "key": CONFIG.RAZORPAY_KEY_ID, 
-                    "amount": totalAmountInPaise, 
-                    "currency": CONFIG.CURRENCY,
-                    "name": CONFIG.STORE_NAME,
-                    "description": "E-Commerce Order Checkout",
-                    "handler": function (response){
-                        alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-                        cart = [];
-                        localStorage.setItem('dearly_cart', JSON.stringify(cart));
-                        updateCartBadge();
-                        toggleCartModal(false);
-                        e.target.reset();
-                    },
-                    "prefill": {
-                        "name": document.getElementById('fname').value + " " + document.getElementById('lname').value,
-                        "email": document.getElementById('email').value || "customer@example.com",
-                        "contact": phone
-                    },
-                    "theme": {
-                        "color": "#78412c"
-                    }
-                };
+            var options = {
+                "key": CONFIG.RAZORPAY_KEY_ID, 
+                "amount": totalAmountInPaise, 
+                "currency": CONFIG.CURRENCY,
+                "name": CONFIG.STORE_NAME,
+                "description": "E-Commerce Order Checkout",
+                "handler": function (response){
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    cart = [];
+                    localStorage.setItem('dearly_cart', JSON.stringify(cart));
+                    updateCartBadge();
+                    toggleCartModal(false);
+                    e.target.reset();
+                },
+                "prefill": {
+                    "name": document.getElementById('fname').value + " " + document.getElementById('lname').value,
+                    "email": email,
+                    "contact": phone
+                },
+                "theme": {
+                    "color": "#78412c"
+                }
+            };
 
-                var rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response){
-                    alert("Payment failed: " + response.error.description);
-                });
-                rzp1.open();
-            } else {
-                alert("Order placed successfully via Cash on Delivery!");
-                cart = [];
-                localStorage.setItem('dearly_cart', JSON.stringify(cart));
-                updateCartBadge();
-                toggleCartModal(false);
-                e.target.reset();
-            }
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                alert("Payment failed: " + response.error.description);
+            });
+            rzp1.open();
         }
 
         // Contact Support Dialog Modal Functions
@@ -827,19 +749,19 @@
                 bodyEl.innerHTML = `
                     <p>Items purchased from DearlyCharms can be returned within <strong>24 hours</strong> of delivery.</p>
                     <p>To be eligible for a return, items must be in an <strong>unused and unbroken condition</strong> in their original packaging.</p>
-                    <p>If you receive a broken item (especially under Cash on Delivery), you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
+                    <p>If you receive a broken item, you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
                 `;
             } else if (type === 'shipping') {
                 titleEl.innerText = "Shipping and Delivery";
                 bodyEl.innerHTML = `
                     <p>We ship all orders across India via trusted courier partners.</p>
                     <p>Standard delivery takes between 3 to 7 business days depending on your pincode location.</p>
-                    <p>Cash on Delivery (COD) and Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
+                    <p>Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
                 `;
             } else if (type === 'privacy') {
                 titleEl.innerText = "Privacy Policy";
                 bodyEl.innerHTML = `
-                    <p>We collect essential customer contact and shipping information (First Name, Last Name, Address, Pincode, Phone Number, and optional email) solely for the purpose of fulfilling your imitation jewelry orders.</p>
+                    <p>We collect essential customer contact and shipping information (First Name, Last Name, Address, Pincode, Phone Number, and email) solely for the purpose of fulfilling your imitation jewelry orders.</p>
                     <p>We strongly advise customers to safeguard their personal account information and secure their devices when submitting orders.</p>
                 `;
             } else if (type === 'faq') {
@@ -847,7 +769,7 @@
                 bodyEl.innerHTML = `
                     <p><strong>Q: Are these imitation pieces skin-friendly?</strong><br>A: Yes, our jewelry features high-grade plating designed to be gentle on skin.</p>
                     <p><strong>Q: How do I maintain the antique gold finish?</strong><br>A: Keep away from perfumes, sweat, and moisture. Store in a dry airtight pouch after use.</p>
-                    <p><strong>Q: Can I pay online?</strong><br>A: Yes, you can choose between Cash on Delivery or Instant Online Payment via GPay / UPI / Cards.</p>
+                    <p><strong>Q: Can I pay online?</strong><br>A: Yes, all orders are processed safely via Instant Online Payment (UPI / Cards / Net Banking).</p>
                 `;
             }
             modal.classList.remove('hidden');
