@@ -105,12 +105,12 @@
             </div>
 
 
-		<div>
+	<div>
                 <h4 class="font-bold mb-3 uppercase tracking-wider text-xs">Support & Help</h4>
                 <ul class="space-y-2 text-xs text-gray-600">
                     <li><a href="#" onclick="openPolicyModal('faq')" class="hover:underline">General FAQs</a></li>
                     <li><a href="#" onclick="openContactModal()" class="hover:underline font-semibold text-terracotta">Contact Support</a></li>
-                    <li><span class="text-gray-500">Secure Online UPI & Card Payment Support</span></li>
+                    <li><span class="text-gray-500">100% Secure UPI & Card Payments</span></li>
                 </ul>
             </div>
         </div>
@@ -367,8 +367,8 @@
 
                 const viewBtn = document.createElement('button');
                 viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3 z-10";
-                viewBtn.textContent = "360° View";
 
+//                viewBtn.textContent = "360° View";
                 let imagesCountBadge = null;
                 if (p.images && p.images.length > 1) {
                     const extraCount = p.images.length - 1;
@@ -398,7 +398,7 @@
 
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(finishTag);
-                imgContainer.appendChild(viewBtn);
+//                imgContainer.appendChild(viewBtn);
 
                 if (imagesCountBadge) {
                     imgContainer.appendChild(imagesCountBadge);
