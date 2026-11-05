@@ -184,6 +184,17 @@
                         <input type="email" id="email" required class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-terracotta" placeholder="Required for payment receipt">
                     </div>
 
+
+<!-- THE COUPON CODE HTML SNIPPET -->
+    <div class="mb-3">
+        <label class="block text-xs text-gray-600 mb-1">Affiliate / Coupon Code (Optional)</label>
+        <div class="flex gap-2">
+            <input type="text" id="coupon-code" placeholder="e.g. MARKETER10" class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm uppercase focus:outline-none focus:border-terracotta">
+            <button type="button" onclick="applyCoupon()" class="bg-gray-800 text-white px-4 py-1.5 rounded text-xs font-bold hover:bg-black transition">Apply</button>
+        </div>
+        <p id="coupon-feedback" class="text-[11px] mt-1 text-gray-500"></p>
+    </div>
+
                     <!-- Mandatory Attestation -->
                     <div class="mt-4 bg-gray-50 p-3 rounded border border-gray-200">
                         <label class="flex items-start space-x-2 cursor-pointer">
@@ -548,7 +559,7 @@
             }
         }
         
-        function renderCartDrawer() {
+function renderCartDrawer() {
             const container = document.getElementById('cart-items-container');
             const totalEl = document.getElementById('cart-total');
             if (!container || !totalEl) return;
@@ -638,7 +649,16 @@
                 row.appendChild(rightDiv);
                 container.appendChild(row);
             });
-            totalEl.innerText = `₹${total}`;
+
+            // --- STEP 3 COUPON CALCULATION ADDED HERE ---
+            let discountAmount = Math.round((total * appliedDiscountPercent) / 100);
+            let finalTotal = total - discountAmount;
+
+            if (appliedDiscountPercent > 0) {
+                totalEl.innerHTML = `<span class="text-xs line-through text-gray-400 mr-2">₹${total}</span> ₹${finalTotal} <span class="text-xs text-green-600 font-normal">(${appliedDiscountPercent}% OFF)</span>`;
+            } else {
+                totalEl.innerText = `₹${total}`;
+            }
         }
 
         function updateQuantity(id, newQty) {
@@ -664,7 +684,42 @@
             renderCartDrawer();
         }
 
-        // EXCLUSIVE ONLINE PREPAID CHECKOUT SUBMISSION LOGIC
+
+let appliedDiscountPercent = 0;
+        let appliedCouponName = "";
+
+        function applyCoupon() {
+            const inputVal = document.getElementById('coupon-code').value.trim().toUpperCase();
+            const feedback = document.getElementById('coupon-feedback');
+
+            // Define your active marketer coupon codes and their discount percentage here
+            const validCoupons = {
+                "MARKETER10": 10, // Gives 10% off
+                "DEARLY5": 5,     // Gives 5% off
+                "INFLUENCER20": 20 // Gives 20% off
+            };
+
+            if (validCoupons[inputVal]) {
+                appliedDiscountPercent = validCoupons[inputVal];
+                appliedCouponName = inputVal;
+                feedback.className = "text-[11px] mt-1 text-green-600 font-semibold";
+                feedback.innerText = `Success! ${appliedDiscountPercent}% discount applied via code: ${inputVal}`;
+                renderCartDrawer(); // Recalculates total with discount
+            } else if (inputVal === "") {
+                appliedDiscountPercent = 0;
+                appliedCouponName = "";
+                feedback.innerText = "";
+                renderCartDrawer();
+            } else {
+                appliedDiscountPercent = 0;
+                appliedCouponName = "";
+                feedback.className = "text-[11px] mt-1 text-red-600 font-semibold";
+                feedback.innerText = "Invalid coupon code.";
+                renderCartDrawer();
+            }
+        }
+
+  // EXCLUSIVE ONLINE PREPAID CHECKOUT SUBMISSION LOGIC
         function submitOrder(e) {
             e.preventDefault();
             const attestation = document.getElementById('return-attestation').checked;
@@ -688,10 +743,14 @@
                 return;
             }
 
-            let totalAmountInRupees = cart.reduce((sum, cartItem) => {
+            // Calculate subtotal, discount, and final amount
+            let subtotal = cart.reduce((sum, cartItem) => {
                 let p = products.find(item => String(item.id) === String(cartItem.id));
                 return sum + ((p ? p.price : 549) * cartItem.qty);
             }, 0);
+
+            let discountAmount = Math.round((subtotal * appliedDiscountPercent) / 100);
+            let totalAmountInRupees = subtotal - discountAmount;
             let totalAmountInPaise = totalAmountInRupees * 100;
 
             if (totalAmountInPaise <= 0) {
@@ -705,9 +764,15 @@
                 "currency": CONFIG.CURRENCY,
                 "name": CONFIG.STORE_NAME,
                 "description": "E-Commerce Order Checkout",
+                "notes": {
+                    "coupon_used": appliedCouponName || "None",
+                    "discount_applied": appliedDiscountPercent + "%"
+                },
                 "handler": function (response){
                     alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
                     cart = [];
+                    appliedDiscountPercent = 0;
+                    appliedCouponName = "";
                     localStorage.setItem('dearly_cart', JSON.stringify(cart));
                     updateCartBadge();
                     toggleCartModal(false);
