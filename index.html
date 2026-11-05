@@ -739,13 +739,13 @@
             document.getElementById('contact-modal').classList.add('hidden');
         }
 
-        // FULLY PRESERVED POLICY & ABOUT US MODALS
+// FULLY PRESERVED POLICY & ABOUT US MODALS
         function openPolicyModal(type) {
             const modal = document.getElementById('policy-modal');
             const titleEl = document.getElementById('policy-title');
             const bodyEl = document.getElementById('policy-body');
 
-if (type === 'about') {
+            if (type === 'about') {
                 titleEl.innerText = "About DearlyEthnic";
                 bodyEl.innerHTML = `
                     <p>Welcome to <strong>DearlyEthnic</strong>, your destination for exquisite imitation jewelry and handloom drapes tailored for the modern Indian aesthetic.</p>
@@ -753,11 +753,15 @@ if (type === 'about') {
                     <p>We believe style is an everyday expression. Thank you for making us a part of your wardrobe.</p>
                 `;
             } else if (type === 'returns') {
-                titleEl.innerText = "Returns and Cancellation Policy";
+                titleEl.innerText = "Returns, Cancellations & Shipping Policy";
                 bodyEl.innerHTML = `
-                    <p>Items purchased from DearlyCharms can be returned within <strong>24 hours</strong> of delivery.</p>
+                    <p>Items purchased from DearlyEthnic can be returned within <strong>24 hours</strong> of delivery.</p>
                     <p>To be eligible for a return, items must be in an <strong>unused and unbroken condition</strong> in their original packaging.</p>
                     <p>If you receive a broken item, you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
+                    <hr class="my-3 border-gray-200">
+                    <p><strong>Out-of-Stock & Bulk Order Adjustments:</strong> In the rare event that an item goes out of stock due to simultaneous orders or bulk purchases, we will review your order and reach out to you via email. If an order cannot be fulfilled, we will manually process a full refund back to your original payment method within <strong>5–7 working days</strong>.</p>
+                    <hr class="my-3 border-gray-200">
+                    <p><strong>Delivery Updates:</strong> Standard delivery takes between 3 to 7 business days. If your delivery takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a> with your order details, and we will provide you with an update as early as we can.</p>
                 `;
             } else if (type === 'shipping') {
                 titleEl.innerText = "Shipping and Delivery";
@@ -765,6 +769,7 @@ if (type === 'about') {
                     <p>We ship all orders across India via trusted courier partners.</p>
                     <p>Standard delivery takes between 3 to 7 business days depending on your pincode location.</p>
                     <p>Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
+                    <p><strong>Delayed Shipments:</strong> If your delivery takes more than the expected time frame, please do not hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will look into it and update you as early as possible.</p>
                 `;
             } else if (type === 'privacy') {
                 titleEl.innerText = "Privacy Policy";
@@ -778,11 +783,12 @@ if (type === 'about') {
                     <p><strong>Q: Are these imitation pieces skin-friendly?</strong><br>A: Yes, our jewelry features high-grade plating designed to be gentle on skin.</p>
                     <p><strong>Q: How do I maintain the antique gold finish?</strong><br>A: Keep away from perfumes, sweat, and moisture. Store in a dry airtight pouch after use.</p>
                     <p><strong>Q: Can I pay online?</strong><br>A: Yes, all orders are processed safely via Instant Online Payment (UPI / Cards / Net Banking).</p>
+                    <p><strong>Q: What happens if an ordered item goes out of stock or faces a bulk order conflict?</strong><br>A: We will review your order and notify you via email if there's any mismatch. If an order cannot be fulfilled, we manually process your refund, which is credited to your original payment method within <strong>5–7 working days</strong>.</p>
+                    <p><strong>Q: What should I do if my delivery is delayed?</strong><br>A: If your package takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will track it down and provide an update as early as possible.</p>
                 `;
             }
             modal.classList.remove('hidden');
         }
-
         function closePolicyModal() {
             document.getElementById('policy-modal').classList.add('hidden');
         }
