@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DearlyEthnic - Exquisite Imitation Jewelry & Drapes</title>
+    <title>SolaraSolace - Exquisite Imitation Jewelry & Drapes</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
  
     <!-- Tailwind CSS CDN -->
@@ -13,35 +13,40 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
-        .bg-terracotta { background-color: #78412c; }
-        .text-terracotta { color: #78412c; }
-        .border-terracotta { border-color: #78412c; }
-        .hover\:bg-terracotta-dark:hover { background-color: #5e3221; }
+/* BRAND PALETTE UPDATES */
+        /* Updated background from terracotta (#78412c) to Ruby Red (#9A2020) */
+        .bg-terracotta { background-color: #9A2020; }
+        /* Updated text color for high contrast and luxury */
+        .text-terracotta { color: #9A2020; }
+        /* Updated border color */
+        .border-terracotta { border-color: #9A2020; }
+        /* Updated hover color to a darker, more vibrant red */
+        .hover\:bg-terracotta-dark:hover { background-color: #741818; }
     </style>
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col font-sans">
 
+
 <!-- Header -->
-    <header class="border-b border-gray-200 sticky top-0 bg-white z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            
-            <!-- Logo Section -->
-            <a href="index.html" class="flex items-center">
-                <img src="images/DearlyEthnic-logo.jpg" alt="DearlyEthnic Logo" class="h-16 md:h-20 w-auto">
-            </a>
+<header class="border-b border-gray-200 sticky top-0 bg-white z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        
+        <!-- Logo Section with precise extended left pull -->
+        <a href="index.html" class="flex items-center -ml-[38px]">
+            <img src="images/SolaraSolace-logo.jpg" alt="SolaraSolace Logo" class="h-16 md:h-20 w-auto">
+        </a>
 
-            <!-- Cart Button Section -->
-            <div class="flex items-center space-x-4">
-                <button onclick="toggleCartModal(true)" class="relative p-2 text-terracotta hover:bg-gray-100 rounded-full transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <span id="cart-badge" class="absolute top-0 right-0 bg-terracotta text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
-                </button>
-            </div>
+        <!-- Cart Button Section -->
+        <div class="flex items-center space-x-4">
+            <button onclick="toggleCartModal(true)" class="relative p-2 text-terracotta hover:bg-gray-100 rounded-full transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span id="cart-badge" class="absolute top-0 right-0 bg-terracotta text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+            </button>
         </div>
-    </header>
-
+    </div>
+</header>
 
     <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
@@ -99,7 +104,7 @@
     <footer class="bg-white border-t border-gray-200 mt-16 text-sm">
         <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-black">
  <div>
-    <h3 class="font-bold text-base mb-3 text-terracotta">DearlyEthnic</h3>
+    <h3 class="font-bold text-base mb-3 text-terracotta">SolaraSolace</h3>
     <p class="text-gray-600 text-xs mb-3">Exquisite imitation jewelry and handloom drapes curated for modern everyday elegance and special moments alike.</p>
     <a href="#" onclick="openPolicyModal('about')" class="inline-block text-xs font-semibold text-terracotta underline hover:text-black">About Us &rarr;</a>
 </div>
@@ -123,7 +128,7 @@
             </div>
         </div>
         <div class="border-t border-gray-100 py-4 text-center text-xs text-gray-500">
-            © 2026 DearlyEthnic. All rights reserved.
+            © 2026 SolaraSolace. All rights reserved.
         </div>
     </footer>
 
@@ -236,7 +241,7 @@
         // --- STORE CONFIGURATION FOR HANDOVER ---
         const CONFIG = {
             RAZORPAY_KEY_ID: "YOUR_RAZORPAY_TEST_KEY_ID", // Owner replaces with live key later
-            STORE_NAME: "DearlyEthnic",
+            STORE_NAME: "SolaraSolace",
             CURRENCY: "INR"
         };
 
@@ -276,7 +281,7 @@
 
         // Load cart immediately on execution
         try {
-            const savedCart = JSON.parse(localStorage.getItem('dearly_cart'));
+            const savedCart = JSON.parse(localStorage.getItem('solara_cart'));
             if (Array.isArray(savedCart)) {
                 cart = savedCart.map(item => ({
                     id: String(item.id),
@@ -293,7 +298,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref');
             if (refCode) {
-                localStorage.setItem('dearly_affiliate', refCode.toUpperCase());
+                localStorage.setItem('solara_affiliate', refCode.toUpperCase());
             }
 
             renderCategoryTabs();
@@ -381,10 +386,6 @@
                 finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded z-10";
                 finishTag.textContent = p.finish || 'Jewelry';
 
-                const viewBtn = document.createElement('button');
-                viewBtn.className = "absolute bottom-2 right-2 bg-white text-terracotta p-1.5 rounded-full shadow hover:bg-terracotta hover:text-white transition text-xs font-semibold px-3 z-10";
-
-//                viewBtn.textContent = "360° View";
                 let imagesCountBadge = null;
                 if (p.images && p.images.length > 1) {
                     const extraCount = p.images.length - 1;
@@ -414,7 +415,6 @@
 
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(finishTag);
-//                imgContainer.appendChild(viewBtn);
 
                 if (imagesCountBadge) {
                     imgContainer.appendChild(imagesCountBadge);
@@ -534,7 +534,7 @@
             } else {
                 cart.push({ id: stringId, qty: 1 });
             }
-            localStorage.setItem('dearly_cart', JSON.stringify(cart));
+            localStorage.setItem('solara_cart', JSON.stringify(cart));
             updateCartBadge();
             toggleCartModal(true);
         }
@@ -658,7 +658,7 @@
             const item = cart.find(i => String(i.id) === stringId);
             if (item) {
                 item.qty = newQty;
-                localStorage.setItem('dearly_cart', JSON.stringify(cart));
+                localStorage.setItem('solara_cart', JSON.stringify(cart));
                 updateCartBadge();
                 renderCartDrawer();
             }
@@ -667,7 +667,7 @@
         function removeFromCart(id) {
             const stringId = String(id);
             cart = cart.filter(item => String(item.id) !== stringId);
-            localStorage.setItem('dearly_cart', JSON.stringify(cart));
+            localStorage.setItem('solara_cart', JSON.stringify(cart));
             updateCartBadge();
             renderCartDrawer();
         }
@@ -708,7 +708,7 @@
             }
 
             // Retrieve the tracked marketer tag (defaults to "None" if they visited directly)
-            const trackedMarketer = localStorage.getItem('dearly_affiliate') || "None";
+            const trackedMarketer = localStorage.getItem('solara_affiliate') || "None";
 
             var options = {
                 "key": CONFIG.RAZORPAY_KEY_ID, 
@@ -722,8 +722,8 @@
                 "handler": function (response){
                     alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
                     cart = [];
-                    localStorage.removeItem('dearly_affiliate'); // Clear referral after successful checkout
-                    localStorage.setItem('dearly_cart', JSON.stringify(cart));
+                    localStorage.removeItem('solara_affiliate'); // Clear referral after successful checkout
+                    localStorage.setItem('solara_cart', JSON.stringify(cart));
                     updateCartBadge();
                     toggleCartModal(false);
                     e.target.reset();
@@ -734,7 +734,7 @@
                     "contact": phone
                 },
                 "theme": {
-                    "color": "#78412c"
+             	"color": "#9A2020" // Replaced old terracotta
                 }
             };
 
@@ -760,16 +760,16 @@
             const bodyEl = document.getElementById('policy-body');
 
             if (type === 'about') {
-                titleEl.innerText = "About DearlyEthnic";
+                titleEl.innerText = "About SolaraSolace";
                 bodyEl.innerHTML = `
-                    <p>Welcome to <strong>DearlyEthnic</strong>, your destination for exquisite imitation jewelry and handloom drapes tailored for the modern Indian aesthetic.</p>
+                    <p>Welcome to <strong>SolaraSolace</strong>, your destination for exquisite imitation jewelry and handloom drapes tailored for the modern Indian aesthetic.</p>
                     <p>Our curation bridges timeless heritage with contemporary versatility. From lightweight everyday pieces to statement celebration wear, every item is handpicked for elegance, comfort, and quality.</p>
                     <p>We believe style is an everyday expression. Thank you for making us a part of your wardrobe.</p>
                 `;
             } else if (type === 'returns') {
                 titleEl.innerText = "Returns, Cancellations & Shipping Policy";
                 bodyEl.innerHTML = `
-                    <p>Items purchased from DearlyEthnic can be returned within <strong>24 hours</strong> of delivery.</p>
+                    <p>Items purchased from SolaraSolace can be returned within <strong>24 hours</strong> of delivery.</p>
                     <p>To be eligible for a return, items must be in an <strong>unused and unbroken condition</strong> in their original packaging.</p>
                     <p>If you receive a broken item, you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
                     <hr class="my-3 border-gray-200">
