@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Forces mobile browsers to respect light theme and blocks color inversion on assets -->
+    <meta name="color-scheme" content="only light">
     <title>SolaraSolace - Exquisite Imitation Jewelry & Drapes</title>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
  
@@ -13,6 +15,9 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
+        :root {
+            color-scheme: only light;
+        }
         .bg-terracotta { background-color: #9A2020; }
         .text-terracotta { color: #9A2020; }
         .border-terracotta { border-color: #9A2020; }
