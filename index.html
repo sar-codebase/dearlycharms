@@ -187,15 +187,26 @@
         </div>
     </div>
 
+    <!-- Contact Support Dialog Modal -->
     <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-xl">
             <button onclick="closeContactModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
             <h3 class="text-xl font-bold text-terracotta mb-3">Contact Customer Support</h3>
-            <p class="text-xs sm:text-sm text-gray-700 mb-4">Email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a></p>
-            <button onclick="closeContactModal()" class="w-full bg-terracotta text-white py-2.5 rounded-lg font-bold text-sm">Got It</button>
-        </div>
-    </div>
+            
+            <div class="text-xs sm:text-sm text-gray-700 space-y-3 leading-relaxed">
+                <p>Have a question or need help with an order? Send us an email at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a> with the following details so we can assist you faster:</p>
+                
+                <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                    <li><strong>Your Full Name & contact details</strong> [Optional, if you prefer a phone call]</li>
+                    <li><strong>Order Number</strong> (if your inquiry is about a purchase)</li>
+                    <li><strong>A brief description</strong> of your question or concern</li>
+                </ul>
+            </div>
 
+            <div class="mt-6">
+                <button onclick="closeContactModal()" class="w-full bg-terracotta text-white py-2.5 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Got It</button>
+            </div>
+        </div>
 <script>
         const CONFIG = {
             RAZORPAY_KEY_ID: "YOUR_RAZORPAY_TEST_KEY_ID",
@@ -677,19 +688,46 @@
 
             if (type === 'about') {
                 titleEl.innerText = "About SolaraSolace";
-                bodyEl.innerHTML = `<p>Welcome to SolaraSolace, your destination for exquisite imitation jewelry and handloom drapes.</p>`;
+                bodyEl.innerHTML = `
+                    <p>Welcome to <strong>SolaraSolace</strong>, your destination for exquisite imitation jewelry and handloom drapes tailored for the modern Indian aesthetic.</p>
+                    <p>Our curation bridges timeless heritage with contemporary versatility. From lightweight everyday pieces to statement celebration wear, every item is handpicked for elegance, comfort, and quality.</p>
+                    <p>We believe style is an everyday expression. Thank you for making us a part of your wardrobe.</p>
+                `;
             } else if (type === 'returns') {
-                titleEl.innerText = "Returns Policy";
-                bodyEl.innerHTML = `<p>Items purchased can be returned within 24 hours of delivery in unused, unbroken condition.</p>`;
+                titleEl.innerText = "Returns, Cancellations & Shipping Policy";
+                bodyEl.innerHTML = `
+                    <p>Items purchased from SolaraSolace can be returned within <strong>24 hours</strong> of delivery.</p>
+                    <p>To be eligible for a return, items must be in an <strong>unused and unbroken condition</strong> in their original packaging.</p>
+                    <p>If you receive a broken item, you must capture a clear photo immediately upon delivery and send it to our official support channel before dispatching the item back to our official return address.</p>
+                    <hr class="my-3 border-gray-200">
+                    <p><strong>Out-of-Stock & Bulk Order Adjustments:</strong> In the rare event that an item goes out of stock due to simultaneous orders or bulk purchases, we will review your order and reach out to you via email. If an order cannot be fulfilled, we will manually process a full refund back to your original payment method within <strong>5–7 working days</strong>.</p>
+                    <hr class="my-3 border-gray-200">
+                    <p><strong>Delivery Updates:</strong> Standard delivery takes between 3 to 7 business days. If your delivery takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a> with your order details, and we will provide you with an update as early as we can.</p>
+                `;
             } else if (type === 'shipping') {
-                titleEl.innerText = "Shipping Policy";
-                bodyEl.innerText = "Standard delivery takes between 3 to 7 business days across India.";
+                titleEl.innerText = "Shipping and Delivery";
+                bodyEl.innerHTML = `
+                    <p>We ship all orders across India via trusted courier partners.</p>
+                    <p>Standard delivery takes between 3 to 7 business days depending on your pincode location.</p>
+                    <p>Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
+                    <p><strong>Delayed Shipments:</strong> If your delivery takes more than the expected time frame, please do not hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will look into it and update you as early as possible.</p>
+                `;
             } else if (type === 'privacy') {
-                titleEl.innerText = "Privacy Policy";
-                bodyEl.innerText = "We collect essential customer contact and shipping information solely for order fulfillment.";
+                 titleEl.innerText = "Privacy Policy";
+                bodyEl.innerHTML = `
+                    <p>We collect essential customer contact and shipping information (First Name, Last Name, Address, Pincode, Phone Number, and email) solely for the purpose of fulfilling your imitation jewelry orders.</p>
+                    <p>We strongly advise customers to safeguard their personal account information and secure their devices when submitting orders.</p>
+                `;
+
             } else if (type === 'faq') {
-                titleEl.innerText = "FAQs";
-                bodyEl.innerText = "Find answers regarding jewelry care, skin-friendly plating, and secure online prepaid checkouts.";
+                titleEl.innerText = "General FAQs";
+                bodyEl.innerHTML = `
+                    <p><strong>Q: Are these imitation pieces skin-friendly?</strong><br>A: Yes, our jewelry features high-grade plating designed to be gentle on skin.</p>
+                    <p><strong>Q: How do I maintain the antique gold finish?</strong><br>A: Keep away from perfumes, sweat, and moisture. Store in a dry airtight pouch after use.</p>
+                    <p><strong>Q: Can I pay online?</strong><br>A: Yes, all orders are processed safely via Instant Online Payment (UPI / Cards / Net Banking).</p>
+                    <p><strong>Q: What happens if an ordered item goes out of stock or faces a bulk order conflict?</strong><br>A: We will review your order and notify you via email if there's any mismatch. If an order cannot be fulfilled, we manually process your refund, which is credited to your original payment method within <strong>5–7 working days</strong>.</p>
+                    <p><strong>Q: What should I do if my delivery is delayed?</strong><br>A: If your package takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will track it down and provide an update as early as possible.</p>
+                `;
             }
             modal.classList.remove('hidden');
         }
