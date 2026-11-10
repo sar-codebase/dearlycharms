@@ -24,9 +24,9 @@
 <!-- Header -->
 <header class="border-b border-gray-200 sticky top-0 bg-white z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-<a href="index.html" class="flex items-center -ml-2 sm:-ml-[38px]">
-    <img src="images/SolaraSolace-logo.jpg" alt="SolaraSolace Logo" class="h-14 sm:h-16 md:h-20 w-auto rounded-xl object-cover shadow-sm">
-</a>
+        <a href="index.html" class="flex items-center -ml-2 sm:-ml-[38px]">
+            <img src="images/SolaraSolace-logo.jpg" alt="SolaraSolace Logo" class="h-14 sm:h-16 md:h-20 w-auto rounded-xl object-cover shadow-sm">
+        </a>
         <div class="flex items-center space-x-4">
             <button onclick="toggleCartModal(true)" class="relative p-2 text-terracotta hover:bg-gray-100 rounded-full transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,17 +41,17 @@
     <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
         <div id="customer-view">
-<!-- Sleeker, Compact Hero Banner -->
-<section class="bg-terracotta text-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm">
-    <div class="max-w-3xl">
-        <h2 class="text-lg sm:text-2xl md:text-3xl font-bold mb-1.5 tracking-tight">
-            Lightweight Elegance for Every Day.
-        </h2>
-        <p class="text-gray-100 text-xs leading-relaxed">
-            Intricately crafted temple finish pieces designed to elevate your everyday workwear, intimate dinners, and celebrations.
-        </p>
-    </div>
-</section>
+            <!-- Sleeker, Compact Hero Banner -->
+            <section class="bg-terracotta text-white rounded-xl p-4 sm:p-6 mb-6 shadow-sm">
+                <div class="max-w-3xl">
+                    <h2 class="text-lg sm:text-2xl md:text-3xl font-bold mb-1.5 tracking-tight">
+                        Lightweight Elegance for Every Day.
+                    </h2>
+                    <p class="text-gray-100 text-xs leading-relaxed">
+                        Intricately crafted temple finish pieces designed to elevate your everyday workwear, intimate dinners, and celebrations.
+                    </p>
+                </div>
+            </section>
             <!-- Navigation Tabs -->
             <div id="catalog-section" class="flex overflow-x-auto space-x-2 pb-3 mb-6 border-b border-gray-200 scrollbar-none"></div>
 
@@ -178,7 +178,7 @@
         </div>
     </div>
 
-    <!-- Policy Modal & Contact Support Modals -->
+    <!-- Policy Modal -->
     <div id="policy-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closePolicyModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black font-bold text-xl">&times;</button>
@@ -207,18 +207,21 @@
                 <button onclick="closeContactModal()" class="w-full bg-terracotta text-white py-2.5 rounded-lg font-bold text-sm hover:bg-terracotta-dark transition">Got It</button>
             </div>
         </div>
-<script>
+    </div>
+
+    <script>
         const CONFIG = {
             RAZORPAY_KEY_ID: "YOUR_RAZORPAY_TEST_KEY_ID",
             STORE_NAME: "SolaraSolace",
             CURRENCY: "INR",
-            GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz2Yu9-gZweFjsBj4kLanaSvb8zcanfCK3XzwQegA0Qb-72PS149DRjG2tTEWlH1bSoww/exec" // <-- Your /exec URL
+            GOOGLE_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz2Yu9-gZweFjsBj4kLanaSvb8zcanfCK3XzwQegA0Qb-72PS149DRjG2tTEWlH1bSoww/exec"
         };
 
         let products = [];
         let cart = [];
         let currentCategory = 'All';
 
+        // Safe Cart Initialization
         try {
             const savedCart = JSON.parse(localStorage.getItem('solara_cart'));
             if (Array.isArray(savedCart)) {
@@ -226,9 +229,13 @@
                     id: String(item.id),
                     qty: Number(item.qty) || 1
                 })).filter(item => item.id && item.qty > 0);
+            } else {
+                cart = [];
+                localStorage.removeItem('solara_cart');
             }
         } catch (e) {
             cart = [];
+            localStorage.removeItem('solara_cart');
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -246,7 +253,7 @@
             }
         });
 
-        async function fetchProductsFromGoogleSheet() {
+async function fetchProductsFromGoogleSheet() {
             try {
                 const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?v=' + new Date().getTime());
                 if (response.ok) {
@@ -262,6 +269,8 @@
             renderCategoryTabs();
             renderProducts();
         }
+
+
 
         function renderCategoryTabs() {
             const container = document.getElementById('catalog-section');
@@ -285,7 +294,8 @@
             });
         }
 
-        function renderProducts() {
+
+function renderProducts() {
             const grid = document.getElementById('product-grid');
             if (!grid) return;
             const sortBy = document.getElementById('sort-select').value;
@@ -297,7 +307,6 @@
                 return matchCat && matchTone;
             });
 
-            // FIXED SORTING LOGIC: Ensures prices are parsed as numbers explicitly
             if (sortBy === 'low-high') {
                 filtered.sort((a, b) => Number(a.price) - Number(b.price));
             } else if (sortBy === 'high-low') {
@@ -318,9 +327,14 @@
                 imgContainer.className = "relative group bg-gray-100 aspect-square overflow-hidden cursor-pointer";
                 imgContainer.onclick = () => openMultiAngleModal(p.id);
 
-                const imgPath = (p.images && p.images[0]) ? p.images[0] : '';
+                // Safely parse comma-separated images into a clean array
+                let rawImages = p.images || p.image || '';
+                let imgList = typeof rawImages === 'string' ? rawImages.split(',').map(s => s.trim()).filter(Boolean) : rawImages;
+                if (!Array.isArray(imgList)) imgList = [imgList];
+                const primaryImg = imgList.length > 0 ? imgList[0] : '';
+
                 const img = document.createElement('img');
-                img.src = imgPath;
+                img.src = primaryImg;
                 img.alt = p.title;
                 img.className = "w-full h-full object-cover group-hover:scale-105 transition duration-300";
 
@@ -328,9 +342,21 @@
                 finishTag.className = "absolute top-2 left-2 bg-terracotta text-white text-[10px] font-bold px-2 py-0.5 rounded z-10";
                 finishTag.textContent = p.finish || 'Jewelry';
 
-                const isOutOfStock = Number(p.stock) <= 0;
+                // Restored "+N Photos" badge matching your reference design
+                let imagesCountBadge = null;
+                if (imgList.length > 1) {
+                    const extraCount = imgList.length - 1;
+                    imagesCountBadge = document.createElement('div');
+                    imagesCountBadge.className = "absolute bottom-2 left-2 bg-black bg-opacity-60 text-white text-[10px] font-semibold px-2 py-1 rounded-md z-10 flex items-center gap-1";
+                    imagesCountBadge.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        +${extraCount} Photos
+                    `;
+                }
 
-                // FIXED ON-SALE BADGE LOGIC
+                const isOutOfStock = Number(p.stock) <= 0;
                 let stockBadgeHtml = '';
                 if (isOutOfStock) {
                     stockBadgeHtml = `<span class="absolute top-3 right-3 bg-gray-800 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wider z-10">Out of Stock</span>`;
@@ -351,6 +377,10 @@
 
                 imgContainer.appendChild(img);
                 imgContainer.appendChild(finishTag);
+
+                if (imagesCountBadge) {
+                    imgContainer.appendChild(imagesCountBadge);
+                }
 
                 const bodyDiv = document.createElement('div');
                 bodyDiv.className = "p-4 flex flex-col flex-grow";
@@ -410,6 +440,8 @@
             });
         }
 
+
+
         function filterCategory(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-tab').forEach(btn => {
@@ -422,13 +454,20 @@
             renderProducts();
         }
 
+
+// 360 Multi-Angle Modal with robust comma-separated image parsing
         function openMultiAngleModal(id) {
-            const p = products.find(item => String(item.id) === String(id));
+            const p = products.find(item => String(item.id).trim() === String(id).trim());
             if (!p) return;
 
             const modal = document.getElementById('product-modal');
             const content = document.getElementById('modal-content');
-            const images = p.images && p.images.length > 0 ? p.images : [''];
+
+            let rawImages = p.images || p.image || '';
+            let images = typeof rawImages === 'string' ? rawImages.split(',').map(s => s.trim()).filter(Boolean) : rawImages;
+            if (!images || images.length === 0) images = [''];
+
+            const isOutOfStock = Number(p.stock) <= 0;
 
             content.innerHTML = `
                 <div class="flex flex-col space-y-3">
@@ -443,18 +482,26 @@
                 </div>
                 <div class="flex flex-col justify-between">
                     <div>
-                        <span class="text-xs bg-terracotta text-white px-2.5 py-0.5 rounded font-bold">${p.finish || 'Jewelry'}</span>
-                        <h2 class="text-xl font-bold text-black mt-2 mb-2">${p.title}</h2>
-                        <p class="text-sm text-gray-600 mb-4">${p.desc}</p>
-                        <div class="text-2xl font-bold text-terracotta mb-4">₹${p.price}</div>
+                        <span id="modal-finish" class="text-xs bg-terracotta text-white px-2.5 py-0.5 rounded font-bold"></span>
+                        <h2 id="modal-title" class="text-xl font-bold text-black mt-2 mb-2"></h2>
+                        <p id="modal-desc" class="text-sm text-gray-600 mb-4"></p>
+                        <div id="modal-price" class="text-2xl font-bold text-terracotta mb-4"></div>
                     </div>
-                    <button ${Number(p.stock) <= 0 ? 'disabled' : ''} onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full ${Number(p.stock) <= 0 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-terracotta text-white hover:bg-terracotta-dark'} py-3 rounded-lg font-bold text-sm transition">
-                        ${Number(p.stock) <= 0 ? 'Out of Stock' : 'Add to Cart & Checkout'}
+                    <button ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}'); closeProductModal(); toggleCartModal(true);" class="w-full ${isOutOfStock ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-terracotta text-white hover:bg-terracotta-dark'} py-3 rounded-lg font-bold text-sm transition">
+                        ${isOutOfStock ? 'Out of Stock' : 'Add to Cart & Checkout'}
                     </button>
                 </div>
             `;
+            
+            document.getElementById('modal-finish').textContent = p.finish || 'Jewelry';
+            document.getElementById('modal-title').textContent = p.title;
+            document.getElementById('modal-desc').textContent = p.desc;
+            document.getElementById('modal-price').textContent = `₹${p.price}`;
+
             modal.classList.remove('hidden');
         }
+
+
 
         function closeProductModal() {
             document.getElementById('product-modal').classList.add('hidden');
@@ -718,7 +765,6 @@
                     <p>We collect essential customer contact and shipping information (First Name, Last Name, Address, Pincode, Phone Number, and email) solely for the purpose of fulfilling your imitation jewelry orders.</p>
                     <p>We strongly advise customers to safeguard their personal account information and secure their devices when submitting orders.</p>
                 `;
-
             } else if (type === 'faq') {
                 titleEl.innerText = "General FAQs";
                 bodyEl.innerHTML = `
