@@ -297,7 +297,7 @@
         <h3 class="text-xl font-bold text-terracotta mb-3">Contact Customer Support</h3>
 
         <div class="text-xs sm:text-sm text-gray-700 space-y-3 leading-relaxed">
-            <p>Have a question or need help with an order? Send us an email at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a> with the following details so we can assist you faster:</p>
+            <p>Have a question or need help with an order? Send us an email at <a href="mailto:solarasolaceofficial@gmail.com" class="text-terracotta font-bold underline">solarasolaceofficial@gmail.com</a> with the following details so we can assist you faster:</p>
 
             <ul class="list-disc pl-5 space-y-2 text-gray-600">
                 <li><strong>Your Full Name &amp; contact details</strong> [Optional, if you prefer a phone call]</li>
@@ -824,7 +824,8 @@
         renderCartDrawer();
     }
 
-    function submitOrder(e) {
+    // Tamper-Proof Server-Verified Checkout
+    async function submitOrder(e) {
         e.preventDefault();
         const attestation = document.getElementById('return-attestation').checked;
         if (!attestation) {
@@ -832,45 +833,80 @@
             return;
         }
 
-        let totalAmountInRupees = cart.reduce((sum, cartItem) => {
-            let p = products.find(item => String(item.id) === String(cartItem.id));
-            return sum + ((p ? p.price : 0) * cartItem.qty);
-        }, 0);
-        let totalAmountInPaise = totalAmountInRupees * 100;
-
-        if (totalAmountInPaise <= 0) {
-            alert("Your cart is empty or contains out-of-stock items!");
+        if (!cart || cart.length === 0) {
+            alert("Your cart is empty!");
             return;
         }
 
-        const trackedMarketer = localStorage.getItem('solara_affiliate') || "None";
+        const submitBtn = document.getElementById('place-order-btn');
+        const originalBtnText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Verifying Prices & Creating Order...";
 
-        var options = {
-            "key": CONFIG.RAZORPAY_KEY_ID,
-            "amount": totalAmountInPaise,
-            "currency": CONFIG.CURRENCY,
-            "name": CONFIG.STORE_NAME,
-            "description": "E-Commerce Order Checkout",
-            "notes": { "marketer_referral": trackedMarketer },
-            "handler": function (response){
-                alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
-                cart = [];
-                localStorage.removeItem('solara_affiliate');
-                localStorage.setItem('solara_cart', JSON.stringify(cart));
-                updateCartBadge();
-                toggleCartModal(false);
-                e.target.reset();
-            },
-            "prefill": {
-                "name": document.getElementById('fname').value + " " + document.getElementById('lname').value,
-                "email": document.getElementById('email').value,
-                "contact": document.getElementById('phone').value
-            },
-            "theme": { "color": "#9A2020" }
+        const trackedMarketer = localStorage.getItem('solara_affiliate') || "None";
+        const customerInfo = {
+            name: document.getElementById('fname').value.trim() + " " + document.getElementById('lname').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            address: `${document.getElementById('address').value.trim()}, Pincode: ${document.getElementById('pincode').value.trim()}`
         };
 
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
+        try {
+            // Send ONLY item IDs & quantities to server for true price & stock verification
+            const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "create_order",
+                    cart: cart.map(item => ({ id: item.id, qty: item.qty })),
+                    marketer_referral: trackedMarketer,
+                    customer: customerInfo
+                })
+            });
+
+            const serverOrder = await response.json();
+
+            if (!serverOrder.success) {
+                alert(serverOrder.error || "Could not verify order. Please refresh and try again.");
+                return;
+            }
+
+            // Open Razorpay locked to the server-generated order_id
+            var options = {
+                "key": CONFIG.RAZORPAY_KEY_ID,
+                "amount": serverOrder.amount,
+                "currency": serverOrder.currency,
+                "name": CONFIG.STORE_NAME,
+                "description": "E-Commerce Order Checkout",
+                "order_id": serverOrder.order_id,
+                "notes": { "marketer_referral": trackedMarketer },
+                "handler": function (response) {
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    cart = [];
+                    localStorage.removeItem('solara_affiliate');
+                    localStorage.setItem('solara_cart', JSON.stringify(cart));
+                    updateCartBadge();
+                    toggleCartModal(false);
+                    e.target.reset();
+                },
+                "prefill": {
+                    "name": customerInfo.name,
+                    "email": customerInfo.email,
+                    "contact": customerInfo.phone
+                },
+                "theme": { "color": "#9A2020" }
+            };
+
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+
+        } catch (err) {
+            console.error("Order creation failed:", err);
+            alert("Network error while connecting to payment server. Please try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        }
     }
 
     function openContactModal() { document.getElementById('contact-modal').classList.remove('hidden'); }
@@ -897,7 +933,7 @@
                 <hr class="my-3 border-gray-200">
                 <p><strong>Out-of-Stock &amp; Bulk Order Adjustments:</strong> In the rare event that an item goes out of stock due to simultaneous orders or bulk purchases, we will review your order and reach out to you via email. If an order cannot be fulfilled, we will manually process a full refund back to your original payment method within <strong>5–7 working days</strong>.</p>
                 <hr class="my-3 border-gray-200">
-                <p><strong>Delivery Updates:</strong> Standard delivery takes between 3 to 7 business days. If your delivery takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a> with your order details, and we will provide you with an update as early as we can.</p>
+                <p><strong>Delivery Updates:</strong> Standard delivery takes between 3 to 7 business days. If your delivery takes longer than expected, please don't hesitate to email us at <a href="mailto:solarasolaceofficial@gmail.com" class="text-terracotta font-bold underline">solarasolaceofficial@gmail.com</a> with your order details, and we will provide you with an update as early as we can.</p>
             `;
         } else if (type === 'shipping') {
             titleEl.innerText = "Shipping and Delivery";
@@ -905,7 +941,7 @@
                 <p>We ship all orders across India via trusted courier partners.</p>
                 <p>Standard delivery takes between 3 to 7 business days depending on your pincode location.</p>
                 <p>Online Prepaid orders are processed and dispatched within 24-48 hours of confirmation.</p>
-                <p><strong>Delayed Shipments:</strong> If your delivery takes more than the expected time frame, please do not hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will look into it and update you as early as possible.</p>
+                <p><strong>Delayed Shipments:</strong> If your delivery takes more than the expected time frame, please do not hesitate to email us at <a href="mailto:solarasolaceofficial@gmail.com" class="text-terracotta font-bold underline">solarasolaceofficial@gmail.com</a>, and we will look into it and update you as early as possible.</p>
             `;
         } else if (type === 'privacy') {
             titleEl.innerText = "Privacy Policy";
@@ -920,7 +956,7 @@
                 <p><strong>Q: How do I maintain the antique gold finish?</strong><br>A: Keep away from perfumes, sweat, and moisture. Store in a dry airtight pouch after use.</p>
                 <p><strong>Q: Can I pay online?</strong><br>A: Yes, all orders are processed safely via Instant Online Payment (UPI / Cards / Net Banking).</p>
                 <p><strong>Q: What happens if an ordered item goes out of stock or faces a bulk order conflict?</strong><br>A: We will review your order and notify you via email if there's any mismatch. If an order cannot be fulfilled, we manually process your refund, which is credited to your original payment method within <strong>5–7 working days</strong>.</p>
-                <p><strong>Q: What should I do if my delivery is delayed?</strong><br>A: If your package takes longer than expected, please don't hesitate to email us at <a href="mailto:dlakshyaofficial@gmail.com" class="text-terracotta font-bold underline">dlakshyaofficial@gmail.com</a>, and we will track it down and provide an update as early as possible.</p>
+                <p><strong>Q: What should I do if my delivery is delayed?</strong><br>A: If your package takes longer than expected, please don't hesitate to email us at <a href="mailto:solarasolaceofficial@gmail.com" class="text-terracotta font-bold underline">solarasolaceofficial@gmail.com</a>, and we will track it down and provide an update as early as possible.</p>
             `;
         }
         modal.classList.remove('hidden');
